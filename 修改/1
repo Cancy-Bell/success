@@ -1,0 +1,331 @@
+那接下来先按你上面说的加 O-emission bias 校准，不重新训练，然后逐步进行后续的修改
+
+
+
+
+
+
+星期六18:26
+
+
+
+
+
+
+已处理 1m 16s
+
+
+
+可以按这个顺序修改，但当前工程盘已断开：F:\AURC-master 和实际运行的 H:\AURC-master 都不存在，系统目前只有 C:、D:，因此暂时无法编辑代码；本轮尚未修改任何文件。
+请重新挂载工程盘或在 Codex 中重新打开 AURC-master 工程，然后告诉我“继续”。我会只实现第一步：
+加载现有第 10 轮 checkpoint；
+在 Dev 扫描 O-emission bias；
+按 Dev Official Token F1 选择最佳 \(\beta\)；
+固定 \(\beta\) 评估 Test；
+单独保存校准前后指标，不重新训练模型。
+
+
+星期六18:28
+
+
+
+
+
+
+
+
+继续
+
+
+
+
+
+
+星期六18:29
+
+
+
+
+
+
+已处理 10m 34s
+
+
+
+第一步已经完成：O-emission bias 校准成功，无需重新训练，原 checkpoint 和预测文件均未覆盖。
+校准结果
+Dev 集选择出的最优值：
+\[
+\boxed{\beta=0.325}
+\]即在 Final CRF 解码前执行：
+\[
+E'_{i,O}=E^{final}_{i,O}+0.325
+\]结果：
+指标	校准前	校准后	变化
+Dev Official Token F1	0.6899	0.7315	+0.0416
+Test Official Token F1	0.6875	0.7021	+0.0145
+Test Official Segment F1	0.6447	0.6823	+0.0376
+Test Official Sentence F1	0.7064	0.7278	+0.0213
+Test Final BIO F1	0.6085	0.6155	+0.0070
+
+
+Test 的 non F1 从 0.7962 提升到 0.8445，原先 6358 个 non→Pro/Con 假阳性下降到 3062 个，说明校准准确命中了之前的问题。
+代价是 Test AU Span F1 从 0.4479 降到 0.4352，Entity F1 从 0.3987 降到 0.3890。这是因为增加 O bias 提高了 Precision，但降低了论据 Recall。当前目标是 Official Token F1，因此 0.325 是 Dev 标准下的正确选择。
+文件
+[校准脚本](F:/AURC-master/calibrate_o_emission_bias.py)
+[完整校准结果](F:/AURC-master/models/batch_size_comparison/run_20260808_153633/batch_size_32/o_emission_bias_calibration/o_emission_bias_calibration.json)
+[Dev 扫描曲线](F:/AURC-master/models/batch_size_comparison/run_20260808_153633/batch_size_32/o_emission_bias_calibration/dev_o_bias_scan.csv)
+[校准后 Dev 预测](F:/AURC-master/models/batch_size_comparison/run_20260808_153633/batch_size_32/o_emission_bias_calibration/dev_calibrated.jsonl)
+[校准后 Test 预测](F:/AURC-master/models/batch_size_comparison/run_20260808_153633/batch_size_32/o_emission_bias_calibration/test_calibrated.jsonl)
+以后可以直接运行，无需参数：
+D:\anaconda\envs\aurc\python.exe F:\AURC-master\calibrate_o_emission_bias.py
+脚本会自动寻找最近一次完整实验，使用 Dev 选择 bias，再固定该值评估 Test。已通过编译检查和 CRF 路径等价性断言。
+下一步应单独把早停和 checkpoint 保存指标从 Dev Final 5-class BIO F1 改为 Dev Official Token F1，暂不改 loss 和图结构。
+
+已编辑 2 个文件+533-2查看更改撤销审核
+
+calibrate_o_emission_bias.pycalibrate_o_emission_bias.py+483-2
+tests/test_o_emission_bias_calibration.pytests/test_o_emission_bias_calibration.py+50-0
+
+
+
+
+
+星期六18:39
+
+
+
+
+
+
+
+
+好的，下一步
+
+
+
+
+
+
+星期六18:40
+
+
+
+
+
+
+已处理 2m 27s
+
+
+
+第二步已完成。下一次训练将统一使用：
+\[
+\boxed{\text{Dev Official Token Macro-F1}}
+\]作为：
+Early stopping 指标
+Best checkpoint 保存指标
+Best epoch 选择指标
+最终结果 JSON 中的 selection metric
+核心评分现在直接读取：
+split_results["dev"]["official_token_macro_f1"]
+修改位置：[run_AURC_token.py (line 753)](F:/AURC-master/src/run_AURC_token.py:753)
+新 checkpoint 会保存：
+{
+  "selection_metric": "dev_official_token_macro_f1",
+  "selection_score": 0.0,
+  "dev_official_token_f1": 0.0
+}
+旧 checkpoint 仍然可以加载，而且会继续明确标记为旧的 dev_final_bio_token_macro_f1，不会错误重命名。
+验证情况：
+全部 Python 文件编译通过
+Official Token 指标来源断言通过
+新 checkpoint 元数据断言通过
+旧 checkpoint 兼容断言通过
+未重新训练，也未修改现有第 10 轮 checkpoint
+新增测试：[test_checkpoint_selection.py](F:/AURC-master/tests/test_checkpoint_selection.py)
+下一步可以单独增加面向 non/pro/con 的 Official 三分类辅助损失，暂时不加入 Initial CRF 辅助 loss，确保逐项观察每个修改带来的影响。
+
+已编辑 2 个文件+97-22查看更改撤销审核
+
+src/run_AURC_token.pysrc/run_AURC_token.py+59-22
+tests/test_checkpoint_selection.pytests/test_checkpoint_selection.py+38-0
+
+
+
+
+
+星期六18:43
+
+
+
+
+
+
+
+
+我现在就跑代码，还是等下一步修改完之后跑
+
+
+
+
+
+
+星期六18:44
+
+
+
+
+
+
+先不要跑完整训练，建议等接下来两项核心 loss 修改完成后再跑：
+增加 Official non/pro/con 三分类辅助损失；
+增加 Initial CRF 辅助损失，缓解训练用 Gold BIO、测试用 predicted BIO 的差异。
+原因是刚完成的 checkpoint 修改只改变“保存哪一轮”，不会改变模型学习过程。现在重新训练一次的收益有限，而且完整实验耗时较长。
+推荐顺序：
+\[
+\text{完成两项 loss 修改}
+\rightarrow
+\text{代码验证}
+\rightarrow
+\text{重新训练 batch size 32}
+\rightarrow
+\text{Dev 选择最佳 checkpoint}
+\rightarrow
+\text{O-bias 校准}
+\rightarrow
+\text{Test 最终评估}
+\]因此现在先继续修改，等我明确告诉你“可以直接运行”后再开始训练。
+
+
+星期六18:44
+
+
+
+
+
+
+
+
+好的，继续改吧
+
+
+
+
+
+
+星期六18:44
+
+
+
+
+
+
+已处理 5m 18s
+
+
+
+两项 loss 修改已经完成，现在可以开始新一轮训练。为了逐项判断修改效果，建议这次只跑 batch_size=32，暂时不要跑 64。
+新的损失为：
+\[
+\mathcal L_{BIO}
+=
+\mathcal L_{FinalCRF}
++
+0.3\mathcal L_{InitialCRF}
++
+0.5\mathcal L_{OfficialToken}
+\]总损失仍保持三个顶层任务：
+\[
+\mathcal L
+=
+\mathcal L_{BIO}
++
+\mathcal L_{AU}
++
+\mathcal L_D
+\]Official 三分类 logits 按以下方式从 Final BIO emission 聚合：
+\[
+z_{non}=E_O
+\]\[
+z_{con}=\logsumexp(E_{B-Con},E_{I-Con})
+\]\[
+z_{pro}=\logsumexp(E_{B-Pro},E_{I-Pro})
+\]同时：
+Initial CRF 现在得到直接监督；
+Final CRF 仍是最终 BIO 主损失；
+early stopping/checkpoint 使用 Dev Official Token F1；
+每个 loss 分量都会分别输出到控制台和指标 JSON；
+launcher 已明确记录两个新权重；
+24 项测试全部通过。
+建议运行：
+D:\anaconda\envs\aurc\python.exe F:\AURC-master\run_batch_size_experiments.py --batch_sizes 32
+如果 PyCharm 中工程显示为 H:\AURC-master，将上面的 F: 换成 H: 即可。
+训练结束后再直接运行：
+D:\anaconda\envs\aurc\python.exe F:\AURC-master\calibrate_o_emission_bias.py
+它会自动找到这次新实验，在 Dev 上选择 O bias，再固定到 Test。暂时不要继续改 Document feedback 或图连接，先观察这组 loss 修改能否真正提高未校准和校准后的 Official Token F1。
+
+已编辑 6 个文件+181-60查看更改撤销审核
+
+src/models.pysrc/models.py+51-1
+src/run_AURC_token.pysrc/run_AURC_token.py+39-5
+run_batch_size_experiments.pyrun_batch_size_experiments.py+6-2
+再显示 3 个文件
+
+
+
+
+星期六18:50
+
+
+
+
+
+
+
+
+COMMAND: D:\anaconda\envs\aurc\python.exe C:\Users\TYUST\Desktop\AURC-master\sr…
+
+看一下结果，然后进行下一步
+
+
+
+
+
+
+星期六20:19
+
+
+
+
+
+
+已处理 7m 14s
+
+
+
+看完结果了：这次新 loss 已经生效，early stopping 也确实按 Dev Official Token macro-F1 选 checkpoint。
+这次 best：
+Best epoch: 10
+Dev Official Token F1: 0.6896
+Test Official Token F1: 0.6988
+Test Final 5-class BIO F1: 0.6144
+Test AU stance F1: 0.8821
+Test Document F1: 0.7114
+判断：这次比未校准的旧结果略好，但还没有超过之前“旧模型 + 离线 O-bias 校准”的 Test Official Token F1 = 0.7021。所以我已经进行了下一步修改：把 O-emission bias 从“训练后离线校准”推进为“训练中可学习参数”。
+已改好：
+[models.py (line 269)](F:/AURC-master/src/models.py:269)：新增 initial_o_bias
+[models.py (line 335)](F:/AURC-master/src/models.py:335)：新增可训练参数 final_o_bias
+[models.py (line 594)](F:/AURC-master/src/models.py:594)：Final CRF 前给 O emission 加 learnable bias
+[run_AURC_token.py (line 549)](F:/AURC-master/src/run_AURC_token.py:549)：新增命令行参数 --initial_o_bias
+[run_AURC_token.py (line 314)](F:/AURC-master/src/run_AURC_token.py:314)：每轮日志会输出 O-bias
+[run_batch_size_experiments.py (line 44)](F:/AURC-master/run_batch_size_experiments.py:44)：批量实验默认 initial_o_bias=0.325
+我也跑完验证了：
+24 tests passed
+compileall passed
+你下一次可以直接跑 batch32：
+D:\anaconda\envs\aurc\python.exe F:\AURC-master\run_batch_size_experiments.py --batch_sizes 32
+如果你 PyCharm 里实际用的是 C:\Users\TYUST\Desktop\AURC-master，路径换成你的实际工程路径即可。下一次日志里你应该能看到：
+Final O-emission bias: learnable scalar initialized to 0.325
+...
+O-bias=...
+这轮跑完后重点看：Test Official Token F1 能不能从 0.6988 冲过 0.7021。

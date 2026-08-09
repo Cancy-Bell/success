@@ -1,0 +1,233 @@
+D:\anaconda\envs\aurc\python.exe "D:/PyCharm 2026.1.3/plugins/python-ce/helpers/pydev/pydevd.py" --multiprocess --qt-support=auto --client 127.0.0.1 --port 64823 --file H:\AURC-master\src\run_AURC_token.py --train --crf --target_domain In-Domain --data_dir .\data --input_file AURC_DATA_dict.json --output_dir .\models\aurc_graph --pretrained_weights D:\software\huggingface\bert-large-cased-whole-word-masking --local_files_only --epochs 30 --max_sequence_length 64 --train_batch_size 32 --eval_batch_size 32 --test_batch_size 32 --graph_start_epoch 16 --spacy_model en_core_web_sm --gcn_layers 2 --gcn_dropout 0.1 --hetgat_layers 2 --hetgat_heads 4 --hetgat_dropout 0.1 --au_semantic_threshold 0.5 --au_top_k 3 --au_graph_alpha 0.5 --au_syntax_hops 1 --early_stop_patience 5 --early_stop_min_delta 0.0 --save_predictions --save_alignment_debug --local_files_only 
+已连接到 pydev 调试器(内部版本号 261.25134.203)2026-08-07 09:51:02,169 | INFO | device=cuda:0
+2026-08-07 09:51:02,288 | INFO | Best checkpoint criterion = Dev Entity F1
+2026-08-07 09:51:02,288 | INFO | best_model_path=H:\AURC-master\models\aurc_graph\checkpoints\best_entity_model.pt
+2026-08-07 09:51:02,414 | INFO | Loaded 8 official AURC topics from .\data\AURC_DATA_dict.json
+2026-08-07 09:51:23,448 | WARNING | sample=9ace278617e42a54838a8e3eac04ab9a could not locate official token 16="'s"; using approximate offset
+2026-08-07 09:51:23,449 | WARNING | sample=9ace278617e42a54838a8e3eac04ab9a WordPiece 17 span (80, 81) did not overlap an official token; using nearest token 16
+2026-08-07 09:51:24,010 | WARNING | sample=8d7bcb76a975ff78484593c7d0a9dd3f could not locate official token 21="'s"; using approximate offset
+2026-08-07 09:51:26,372 | WARNING | sample=e485953c94eaacc19c759feeedf8aff7 WordPiece 19 span (114, 116) did not overlap an official token; using nearest token 18
+2026-08-07 09:51:26,373 | WARNING | sample=e485953c94eaacc19c759feeedf8aff7 WordPiece 20 span (117, 120) did not overlap an official token; using nearest token 18
+2026-08-07 09:51:26,373 | WARNING | sample=e485953c94eaacc19c759feeedf8aff7 WordPiece 22 span (121, 122) did not overlap an official token; using nearest token 18
+2026-08-07 09:51:26,373 | WARNING | sample=e485953c94eaacc19c759feeedf8aff7 WordPiece 23 span (122, 125) did not overlap an official token; using nearest token 18
+2026-08-07 09:51:26,373 | WARNING | sample=e485953c94eaacc19c759feeedf8aff7 WordPiece 24 span (125, 129) did not overlap an official token; using nearest token 18
+2026-08-07 09:51:26,373 | WARNING | sample=e485953c94eaacc19c759feeedf8aff7 WordPiece 25 span (129, 130) did not overlap an official token; using nearest token 18
+2026-08-07 09:51:26,373 | WARNING | sample=e485953c94eaacc19c759feeedf8aff7 WordPiece 26 span (130, 133) did not overlap an official token; using nearest token 18
+2026-08-07 09:51:26,374 | WARNING | sample=e485953c94eaacc19c759feeedf8aff7 WordPiece 27 span (133, 134) did not overlap an official token; using nearest token 18
+2026-08-07 09:51:26,374 | WARNING | sample=e485953c94eaacc19c759feeedf8aff7 WordPiece 28 span (134, 135) did not overlap an official token; using nearest token 18
+2026-08-07 09:51:26,374 | WARNING | sample=e485953c94eaacc19c759feeedf8aff7 WordPiece 29 span (135, 138) did not overlap an official token; using nearest token 18
+2026-08-07 09:51:26,374 | WARNING | sample=e485953c94eaacc19c759feeedf8aff7 WordPiece 30 span (138, 139) did not overlap an official token; using nearest token 18
+2026-08-07 09:51:27,244 | WARNING | sample=82932254624fe4995c4319fb3e019e9a WordPiece 29 span (113, 116) did not overlap an official token; using nearest token 20
+2026-08-07 09:51:27,245 | WARNING | sample=82932254624fe4995c4319fb3e019e9a WordPiece 30 span (116, 117) did not overlap an official token; using nearest token 20
+2026-08-07 09:51:27,245 | WARNING | sample=82932254624fe4995c4319fb3e019e9a WordPiece 31 span (117, 121) did not overlap an official token; using nearest token 20
+2026-08-07 09:51:27,245 | WARNING | sample=82932254624fe4995c4319fb3e019e9a WordPiece 32 span (121, 124) did not overlap an official token; using nearest token 20
+2026-08-07 09:51:27,245 | WARNING | sample=82932254624fe4995c4319fb3e019e9a WordPiece 33 span (124, 127) did not overlap an official token; using nearest token 21
+2026-08-07 09:51:27,245 | WARNING | sample=82932254624fe4995c4319fb3e019e9a WordPiece 34 span (127, 129) did not overlap an official token; using nearest token 21
+2026-08-07 09:51:27,245 | WARNING | sample=82932254624fe4995c4319fb3e019e9a WordPiece 35 span (129, 130) did not overlap an official token; using nearest token 21
+2026-08-07 09:51:27,246 | WARNING | sample=82932254624fe4995c4319fb3e019e9a WordPiece 36 span (130, 131) did not overlap an official token; using nearest token 21
+2026-08-07 09:51:27,246 | WARNING | sample=82932254624fe4995c4319fb3e019e9a WordPiece 37 span (131, 132) did not overlap an official token; using nearest token 21
+2026-08-07 09:51:27,246 | WARNING | sample=82932254624fe4995c4319fb3e019e9a WordPiece 38 span (132, 134) did not overlap an official token; using nearest token 21
+2026-08-07 09:51:30,865 | WARNING | sample=be98156eb94fae06f709e8adf9a8bce5 WordPiece 27 span (123, 127) did not overlap an official token; using nearest token 24
+2026-08-07 09:51:30,866 | WARNING | sample=be98156eb94fae06f709e8adf9a8bce5 WordPiece 28 span (127, 128) did not overlap an official token; using nearest token 24
+2026-08-07 09:51:30,866 | WARNING | sample=be98156eb94fae06f709e8adf9a8bce5 WordPiece 29 span (128, 129) did not overlap an official token; using nearest token 25
+2026-08-07 09:51:30,866 | WARNING | sample=be98156eb94fae06f709e8adf9a8bce5 WordPiece 30 span (129, 130) did not overlap an official token; using nearest token 25
+2026-08-07 09:51:30,866 | WARNING | sample=be98156eb94fae06f709e8adf9a8bce5 WordPiece 31 span (130, 137) did not overlap an official token; using nearest token 25
+2026-08-07 09:51:30,866 | WARNING | sample=be98156eb94fae06f709e8adf9a8bce5 WordPiece 33 span (138, 142) did not overlap an official token; using nearest token 25
+2026-08-07 09:51:30,866 | WARNING | sample=be98156eb94fae06f709e8adf9a8bce5 WordPiece 34 span (142, 146) did not overlap an official token; using nearest token 25
+2026-08-07 09:51:30,867 | WARNING | sample=be98156eb94fae06f709e8adf9a8bce5 WordPiece 35 span (146, 147) did not overlap an official token; using nearest token 25
+2026-08-07 09:51:30,867 | WARNING | sample=be98156eb94fae06f709e8adf9a8bce5 WordPiece 36 span (147, 150) did not overlap an official token; using nearest token 25
+2026-08-07 09:51:30,867 | WARNING | sample=be98156eb94fae06f709e8adf9a8bce5 WordPiece 37 span (150, 151) did not overlap an official token; using nearest token 25
+2026-08-07 09:51:31,370 | WARNING | sample=59cbacbfe71d66f55c26dd9b10491b06 could not locate official token 15='cell'; using approximate offset
+2026-08-07 09:51:32,544 | WARNING | sample=4cf24cbd1c1bce40ce2db1feb511711a WordPiece 28 span (151, 152) did not overlap an official token; using nearest token 25
+2026-08-07 09:51:32,544 | WARNING | sample=4cf24cbd1c1bce40ce2db1feb511711a WordPiece 29 span (152, 156) did not overlap an official token; using nearest token 26
+2026-08-07 09:51:32,545 | WARNING | sample=4cf24cbd1c1bce40ce2db1feb511711a WordPiece 30 span (156, 157) did not overlap an official token; using nearest token 26
+2026-08-07 09:51:32,545 | WARNING | sample=4cf24cbd1c1bce40ce2db1feb511711a WordPiece 31 span (157, 158) did not overlap an official token; using nearest token 26
+2026-08-07 09:51:32,545 | WARNING | sample=4cf24cbd1c1bce40ce2db1feb511711a WordPiece 32 span (158, 159) did not overlap an official token; using nearest token 26
+2026-08-07 09:51:32,545 | WARNING | sample=4cf24cbd1c1bce40ce2db1feb511711a WordPiece 33 span (159, 162) did not overlap an official token; using nearest token 26
+2026-08-07 09:51:32,545 | WARNING | sample=4cf24cbd1c1bce40ce2db1feb511711a WordPiece 35 span (163, 170) did not overlap an official token; using nearest token 26
+2026-08-07 09:51:32,546 | WARNING | sample=4cf24cbd1c1bce40ce2db1feb511711a WordPiece 36 span (170, 171) did not overlap an official token; using nearest token 26
+2026-08-07 09:51:32,546 | WARNING | sample=4cf24cbd1c1bce40ce2db1feb511711a WordPiece 37 span (171, 174) did not overlap an official token; using nearest token 26
+2026-08-07 09:51:32,546 | WARNING | sample=4cf24cbd1c1bce40ce2db1feb511711a WordPiece 38 span (174, 175) did not overlap an official token; using nearest token 26
+2026-08-07 09:51:32,546 | WARNING | sample=4cf24cbd1c1bce40ce2db1feb511711a WordPiece 39 span (175, 176) did not overlap an official token; using nearest token 26
+2026-08-07 09:51:33,707 | WARNING | sample=664a340852d067af0a010e4ad5e56361 WordPiece 27 span (145, 146) did not overlap an official token; using nearest token 23
+2026-08-07 09:51:33,707 | WARNING | sample=664a340852d067af0a010e4ad5e56361 WordPiece 28 span (146, 149) did not overlap an official token; using nearest token 23
+2026-08-07 09:51:33,707 | WARNING | sample=664a340852d067af0a010e4ad5e56361 WordPiece 30 span (150, 152) did not overlap an official token; using nearest token 23
+2026-08-07 09:51:33,708 | WARNING | sample=664a340852d067af0a010e4ad5e56361 WordPiece 31 span (152, 153) did not overlap an official token; using nearest token 23
+2026-08-07 09:51:33,708 | WARNING | sample=664a340852d067af0a010e4ad5e56361 WordPiece 32 span (153, 154) did not overlap an official token; using nearest token 23
+2026-08-07 09:51:33,708 | WARNING | sample=664a340852d067af0a010e4ad5e56361 WordPiece 33 span (154, 155) did not overlap an official token; using nearest token 23
+2026-08-07 09:51:33,708 | WARNING | sample=664a340852d067af0a010e4ad5e56361 WordPiece 34 span (155, 157) did not overlap an official token; using nearest token 23
+2026-08-07 09:51:33,708 | WARNING | sample=664a340852d067af0a010e4ad5e56361 WordPiece 35 span (157, 158) did not overlap an official token; using nearest token 23
+2026-08-07 09:51:33,708 | WARNING | sample=664a340852d067af0a010e4ad5e56361 WordPiece 36 span (158, 159) did not overlap an official token; using nearest token 23
+2026-08-07 09:51:33,709 | WARNING | sample=664a340852d067af0a010e4ad5e56361 WordPiece 37 span (159, 160) did not overlap an official token; using nearest token 23
+2026-08-07 09:51:33,709 | WARNING | sample=664a340852d067af0a010e4ad5e56361 WordPiece 38 span (160, 162) did not overlap an official token; using nearest token 23
+2026-08-07 09:51:33,709 | WARNING | sample=664a340852d067af0a010e4ad5e56361 WordPiece 39 span (162, 163) did not overlap an official token; using nearest token 23
+2026-08-07 09:51:33,709 | WARNING | sample=664a340852d067af0a010e4ad5e56361 WordPiece 40 span (163, 164) did not overlap an official token; using nearest token 23
+2026-08-07 09:51:33,709 | WARNING | sample=664a340852d067af0a010e4ad5e56361 WordPiece 41 span (164, 165) did not overlap an official token; using nearest token 23
+2026-08-07 09:51:33,753 | WARNING | sample=c0881e201c1aeff2d82697d3938690b6 could not locate official token 14='-'; using approximate offset
+2026-08-07 09:51:34,952 | WARNING | sample=3abb67003f9796c079256939b0bc9121 could not locate official token 0="O'Conner"; using approximate offset
+2026-08-07 09:51:34,952 | WARNING | sample=3abb67003f9796c079256939b0bc9121 could not locate official token 25="'"; using approximate offset
+2026-08-07 09:51:34,953 | WARNING | sample=3abb67003f9796c079256939b0bc9121 WordPiece 29 span (147, 148) did not overlap an official token; using nearest token 25
+2026-08-07 09:51:34,953 | WARNING | sample=3abb67003f9796c079256939b0bc9121 WordPiece 30 span (148, 149) did not overlap an official token; using nearest token 26
+2026-08-07 09:51:36,004 | WARNING | sample=16b7f74c491bdb283cdbbed9961b5509 could not locate official token 14='"'; using approximate offset
+2026-08-07 09:51:36,004 | WARNING | sample=16b7f74c491bdb283cdbbed9961b5509 could not locate official token 17='"'; using approximate offset
+2026-08-07 09:51:36,009 | WARNING | sample=a8f2d9d5f9e3087a907b713f94e0be22 WordPiece 11 span (65, 68) did not overlap an official token; using nearest token 10
+2026-08-07 09:51:36,009 | WARNING | sample=a8f2d9d5f9e3087a907b713f94e0be22 WordPiece 12 span (68, 69) did not overlap an official token; using nearest token 11
+2026-08-07 09:51:36,010 | WARNING | sample=a8f2d9d5f9e3087a907b713f94e0be22 WordPiece 13 span (69, 70) did not overlap an official token; using nearest token 11
+2026-08-07 09:51:36,010 | WARNING | sample=a8f2d9d5f9e3087a907b713f94e0be22 WordPiece 14 span (70, 71) did not overlap an official token; using nearest token 11
+2026-08-07 09:51:36,010 | WARNING | sample=a8f2d9d5f9e3087a907b713f94e0be22 WordPiece 21 span (107, 108) did not overlap an official token; using nearest token 17
+2026-08-07 09:51:36,010 | WARNING | sample=a8f2d9d5f9e3087a907b713f94e0be22 WordPiece 22 span (108, 109) did not overlap an official token; using nearest token 17
+2026-08-07 09:51:36,011 | WARNING | sample=a8f2d9d5f9e3087a907b713f94e0be22 WordPiece 23 span (109, 110) did not overlap an official token; using nearest token 17
+2026-08-07 09:51:38,139 | WARNING | sample=347b0b5b285d84ac902db48b9a53e328 WordPiece 13 span (50, 54) did not overlap an official token; using nearest token 10
+2026-08-07 09:51:38,140 | WARNING | sample=347b0b5b285d84ac902db48b9a53e328 WordPiece 14 span (54, 55) did not overlap an official token; using nearest token 10
+2026-08-07 09:51:38,140 | WARNING | sample=347b0b5b285d84ac902db48b9a53e328 WordPiece 15 span (55, 56) did not overlap an official token; using nearest token 10
+2026-08-07 09:51:38,140 | WARNING | sample=347b0b5b285d84ac902db48b9a53e328 WordPiece 16 span (56, 57) did not overlap an official token; using nearest token 10
+2026-08-07 09:51:38,140 | WARNING | sample=347b0b5b285d84ac902db48b9a53e328 WordPiece 17 span (57, 65) did not overlap an official token; using nearest token 10
+2026-08-07 09:51:38,140 | WARNING | sample=347b0b5b285d84ac902db48b9a53e328 WordPiece 18 span (65, 67) did not overlap an official token; using nearest token 10
+2026-08-07 09:51:38,141 | WARNING | sample=347b0b5b285d84ac902db48b9a53e328 WordPiece 19 span (67, 68) did not overlap an official token; using nearest token 10
+2026-08-07 09:51:38,141 | WARNING | sample=347b0b5b285d84ac902db48b9a53e328 WordPiece 20 span (68, 70) did not overlap an official token; using nearest token 10
+2026-08-07 09:51:38,141 | WARNING | sample=347b0b5b285d84ac902db48b9a53e328 WordPiece 21 span (70, 73) did not overlap an official token; using nearest token 10
+2026-08-07 09:51:38,141 | WARNING | sample=347b0b5b285d84ac902db48b9a53e328 WordPiece 22 span (73, 74) did not overlap an official token; using nearest token 10
+2026-08-07 09:51:38,141 | WARNING | sample=347b0b5b285d84ac902db48b9a53e328 WordPiece 23 span (74, 75) did not overlap an official token; using nearest token 10
+2026-08-07 09:51:38,141 | WARNING | sample=347b0b5b285d84ac902db48b9a53e328 WordPiece 24 span (75, 78) did not overlap an official token; using nearest token 10
+2026-08-07 09:51:38,142 | WARNING | sample=347b0b5b285d84ac902db48b9a53e328 WordPiece 25 span (78, 79) did not overlap an official token; using nearest token 10
+2026-08-07 09:51:38,142 | WARNING | sample=347b0b5b285d84ac902db48b9a53e328 WordPiece 26 span (79, 83) did not overlap an official token; using nearest token 10
+2026-08-07 09:51:38,142 | WARNING | sample=347b0b5b285d84ac902db48b9a53e328 WordPiece 27 span (83, 84) did not overlap an official token; using nearest token 10
+2026-08-07 09:51:38,142 | WARNING | sample=347b0b5b285d84ac902db48b9a53e328 WordPiece 28 span (84, 86) did not overlap an official token; using nearest token 10
+2026-08-07 09:51:38,142 | WARNING | sample=347b0b5b285d84ac902db48b9a53e328 WordPiece 29 span (86, 87) did not overlap an official token; using nearest token 10
+2026-08-07 09:51:38,142 | WARNING | sample=347b0b5b285d84ac902db48b9a53e328 WordPiece 30 span (87, 89) did not overlap an official token; using nearest token 10
+2026-08-07 09:51:38,143 | WARNING | sample=347b0b5b285d84ac902db48b9a53e328 WordPiece 31 span (89, 90) did not overlap an official token; using nearest token 10
+2026-08-07 09:51:38,143 | WARNING | sample=347b0b5b285d84ac902db48b9a53e328 WordPiece 32 span (90, 93) did not overlap an official token; using nearest token 10
+2026-08-07 09:51:38,143 | WARNING | sample=347b0b5b285d84ac902db48b9a53e328 WordPiece 33 span (93, 94) did not overlap an official token; using nearest token 10
+2026-08-07 09:51:38,143 | WARNING | sample=347b0b5b285d84ac902db48b9a53e328 WordPiece 34 span (94, 99) did not overlap an official token; using nearest token 10
+2026-08-07 09:51:38,143 | WARNING | sample=347b0b5b285d84ac902db48b9a53e328 WordPiece 35 span (99, 100) did not overlap an official token; using nearest token 11
+2026-08-07 09:51:38,143 | WARNING | sample=347b0b5b285d84ac902db48b9a53e328 WordPiece 36 span (100, 107) did not overlap an official token; using nearest token 11
+2026-08-07 09:51:38,144 | WARNING | sample=347b0b5b285d84ac902db48b9a53e328 WordPiece 37 span (107, 108) did not overlap an official token; using nearest token 11
+2026-08-07 09:51:38,144 | WARNING | sample=347b0b5b285d84ac902db48b9a53e328 WordPiece 38 span (108, 111) did not overlap an official token; using nearest token 11
+2026-08-07 09:51:38,144 | WARNING | sample=347b0b5b285d84ac902db48b9a53e328 WordPiece 39 span (111, 112) did not overlap an official token; using nearest token 11
+2026-08-07 09:51:38,144 | WARNING | sample=347b0b5b285d84ac902db48b9a53e328 WordPiece 40 span (112, 113) did not overlap an official token; using nearest token 11
+2026-08-07 09:51:38,144 | WARNING | sample=347b0b5b285d84ac902db48b9a53e328 WordPiece 41 span (113, 114) did not overlap an official token; using nearest token 11
+2026-08-07 09:51:38,144 | WARNING | sample=347b0b5b285d84ac902db48b9a53e328 WordPiece 42 span (114, 119) did not overlap an official token; using nearest token 11
+2026-08-07 09:51:38,145 | WARNING | sample=347b0b5b285d84ac902db48b9a53e328 WordPiece 43 span (119, 120) did not overlap an official token; using nearest token 11
+2026-08-07 09:51:38,145 | WARNING | sample=347b0b5b285d84ac902db48b9a53e328 WordPiece 44 span (120, 126) did not overlap an official token; using nearest token 11
+2026-08-07 09:51:38,145 | WARNING | sample=347b0b5b285d84ac902db48b9a53e328 WordPiece 45 span (126, 127) did not overlap an official token; using nearest token 11
+2026-08-07 09:51:38,145 | WARNING | sample=347b0b5b285d84ac902db48b9a53e328 WordPiece 46 span (127, 136) did not overlap an official token; using nearest token 11
+2026-08-07 09:51:38,145 | WARNING | sample=347b0b5b285d84ac902db48b9a53e328 WordPiece 47 span (136, 137) did not overlap an official token; using nearest token 11
+2026-08-07 09:51:38,145 | WARNING | sample=347b0b5b285d84ac902db48b9a53e328 WordPiece 48 span (137, 139) did not overlap an official token; using nearest token 11
+2026-08-07 09:51:38,145 | WARNING | sample=347b0b5b285d84ac902db48b9a53e328 WordPiece 49 span (139, 140) did not overlap an official token; using nearest token 11
+2026-08-07 09:51:38,146 | WARNING | sample=347b0b5b285d84ac902db48b9a53e328 WordPiece 50 span (140, 141) did not overlap an official token; using nearest token 11
+2026-08-07 09:51:45,331 | WARNING | sample=3698ac93d636e458e5445f6d99139164 could not locate official token 7='-'; using approximate offset
+2026-08-07 09:51:48,442 | WARNING | sample=751bbc373fc5e5c63c3704d826f51225 could not locate official token 20="'s"; using approximate offset
+2026-08-07 09:51:49,702 | WARNING | sample=3a7e2feebace7f17c126759462f1d80f could not locate official token 9="n't"; using approximate offset
+2026-08-07 09:51:50,626 | WARNING | sample=b45cbc97940c05293ab6a558e2e0c453 could not locate official token 9="'s"; using approximate offset
+2026-08-07 09:51:51,838 | WARNING | sample=0475b14631d77fa01ccb13680d95c9d0 could not locate official token 26="'s"; using approximate offset
+2026-08-07 09:51:51,895 | WARNING | sample=076aa468273ad5aff362bfc769b0f91b could not locate official token 6='16½'; using approximate offset
+2026-08-07 09:51:51,895 | WARNING | sample=076aa468273ad5aff362bfc769b0f91b could not locate official token 7='years'; using approximate offset
+2026-08-07 09:51:51,895 | WARNING | sample=076aa468273ad5aff362bfc769b0f91b could not locate official token 9='than'; using approximate offset
+2026-08-07 09:51:51,895 | WARNING | sample=076aa468273ad5aff362bfc769b0f91b could not locate official token 10='that'; using approximate offset
+2026-08-07 09:51:51,895 | WARNING | sample=076aa468273ad5aff362bfc769b0f91b could not locate official token 11='used'; using approximate offset
+2026-08-07 09:51:51,896 | WARNING | sample=076aa468273ad5aff362bfc769b0f91b could not locate official token 13='earlier'; using approximate offset
+2026-08-07 09:51:51,896 | WARNING | sample=076aa468273ad5aff362bfc769b0f91b could not locate official token 14='state'; using approximate offset
+2026-08-07 09:51:51,896 | WARNING | sample=076aa468273ad5aff362bfc769b0f91b could not locate official token 15='-'; using approximate offset
+2026-08-07 09:51:51,896 | WARNING | sample=076aa468273ad5aff362bfc769b0f91b could not locate official token 16='specific'; using approximate offset
+2026-08-07 09:51:51,896 | WARNING | sample=076aa468273ad5aff362bfc769b0f91b could not locate official token 17='case'; using approximate offset
+2026-08-07 09:51:51,896 | WARNING | sample=076aa468273ad5aff362bfc769b0f91b could not locate official token 18='studies'; using approximate offset
+2026-08-07 09:51:51,896 | WARNING | sample=076aa468273ad5aff362bfc769b0f91b could not locate official token 19='of'; using approximate offset
+2026-08-07 09:51:51,897 | WARNING | sample=076aa468273ad5aff362bfc769b0f91b could not locate official token 20='the'; using approximate offset
+2026-08-07 09:51:51,897 | WARNING | sample=076aa468273ad5aff362bfc769b0f91b could not locate official token 21='restaurant'; using approximate offset
+2026-08-07 09:51:51,897 | WARNING | sample=076aa468273ad5aff362bfc769b0f91b could not locate official token 22='industry'; using approximate offset
+2026-08-07 09:51:51,897 | WARNING | sample=076aa468273ad5aff362bfc769b0f91b could not locate official token 23='also'; using approximate offset
+2026-08-07 09:51:51,897 | WARNING | sample=076aa468273ad5aff362bfc769b0f91b could not locate official token 24='allows'; using approximate offset
+2026-08-07 09:51:51,897 | WARNING | sample=076aa468273ad5aff362bfc769b0f91b could not locate official token 25='them'; using approximate offset
+2026-08-07 09:51:51,897 | WARNING | sample=076aa468273ad5aff362bfc769b0f91b could not locate official token 26='to'; using approximate offset
+2026-08-07 09:51:51,897 | WARNING | sample=076aa468273ad5aff362bfc769b0f91b could not locate official token 27='control'; using approximate offset
+2026-08-07 09:51:51,898 | WARNING | sample=076aa468273ad5aff362bfc769b0f91b could not locate official token 28='for'; using approximate offset
+2026-08-07 09:51:51,898 | WARNING | sample=076aa468273ad5aff362bfc769b0f91b could not locate official token 29='the'; using approximate offset
+2026-08-07 09:51:51,898 | WARNING | sample=076aa468273ad5aff362bfc769b0f91b could not locate official token 30='possibility'; using approximate offset
+2026-08-07 09:51:51,898 | WARNING | sample=076aa468273ad5aff362bfc769b0f91b could not locate official token 31='of'; using approximate offset
+2026-08-07 09:51:51,898 | WARNING | sample=076aa468273ad5aff362bfc769b0f91b could not locate official token 32='time'; using approximate offset
+2026-08-07 09:51:51,898 | WARNING | sample=076aa468273ad5aff362bfc769b0f91b could not locate official token 33='-'; using approximate offset
+2026-08-07 09:51:51,899 | WARNING | sample=076aa468273ad5aff362bfc769b0f91b could not locate official token 34='lags'; using approximate offset
+2026-08-07 09:51:51,899 | WARNING | sample=076aa468273ad5aff362bfc769b0f91b could not locate official token 35='in'; using approximate offset
+2026-08-07 09:51:51,899 | WARNING | sample=076aa468273ad5aff362bfc769b0f91b could not locate official token 36='the'; using approximate offset
+2026-08-07 09:51:51,899 | WARNING | sample=076aa468273ad5aff362bfc769b0f91b could not locate official token 37='effect'; using approximate offset
+2026-08-07 09:51:51,899 | WARNING | sample=076aa468273ad5aff362bfc769b0f91b could not locate official token 38='of'; using approximate offset
+2026-08-07 09:51:51,899 | WARNING | sample=076aa468273ad5aff362bfc769b0f91b could not locate official token 39='minimum'; using approximate offset
+2026-08-07 09:51:51,899 | WARNING | sample=076aa468273ad5aff362bfc769b0f91b could not locate official token 40='wage'; using approximate offset
+2026-08-07 09:51:51,899 | WARNING | sample=076aa468273ad5aff362bfc769b0f91b could not locate official token 41='changes'; using approximate offset
+2026-08-07 09:51:51,900 | WARNING | sample=076aa468273ad5aff362bfc769b0f91b could not locate official token 42='on'; using approximate offset
+2026-08-07 09:51:51,900 | WARNING | sample=076aa468273ad5aff362bfc769b0f91b could not locate official token 43='employment'; using approximate offset
+2026-08-07 09:51:51,900 | WARNING | sample=076aa468273ad5aff362bfc769b0f91b could not locate official token 44='.'; using approximate offset
+2026-08-07 09:51:51,900 | WARNING | sample=076aa468273ad5aff362bfc769b0f91b WordPiece 5 span (26, 28) did not overlap an official token; using nearest token 4
+2026-08-07 09:51:51,900 | WARNING | sample=076aa468273ad5aff362bfc769b0f91b WordPiece 6 span (28, 29) did not overlap an official token; using nearest token 4
+2026-08-07 09:51:51,901 | WARNING | sample=076aa468273ad5aff362bfc769b0f91b WordPiece 7 span (30, 35) did not overlap an official token; using nearest token 4
+2026-08-07 09:51:51,901 | WARNING | sample=076aa468273ad5aff362bfc769b0f91b WordPiece 8 span (36, 40) did not overlap an official token; using nearest token 4
+2026-08-07 09:51:51,901 | WARNING | sample=076aa468273ad5aff362bfc769b0f91b WordPiece 9 span (41, 45) did not overlap an official token; using nearest token 4
+2026-08-07 09:51:51,901 | WARNING | sample=076aa468273ad5aff362bfc769b0f91b WordPiece 10 span (46, 50) did not overlap an official token; using nearest token 5
+2026-08-07 09:51:51,901 | WARNING | sample=076aa468273ad5aff362bfc769b0f91b WordPiece 11 span (51, 53) did not overlap an official token; using nearest token 5
+2026-08-07 09:51:51,902 | WARNING | sample=076aa468273ad5aff362bfc769b0f91b WordPiece 12 span (54, 61) did not overlap an official token; using nearest token 5
+2026-08-07 09:51:51,902 | WARNING | sample=076aa468273ad5aff362bfc769b0f91b WordPiece 13 span (62, 67) did not overlap an official token; using nearest token 5
+2026-08-07 09:51:51,902 | WARNING | sample=076aa468273ad5aff362bfc769b0f91b WordPiece 16 span (77, 81) did not overlap an official token; using nearest token 7
+2026-08-07 09:51:51,902 | WARNING | sample=076aa468273ad5aff362bfc769b0f91b WordPiece 17 span (82, 89) did not overlap an official token; using nearest token 7
+2026-08-07 09:51:51,903 | WARNING | sample=076aa468273ad5aff362bfc769b0f91b WordPiece 18 span (90, 92) did not overlap an official token; using nearest token 7
+2026-08-07 09:51:51,903 | WARNING | sample=076aa468273ad5aff362bfc769b0f91b WordPiece 19 span (93, 96) did not overlap an official token; using nearest token 7
+2026-08-07 09:51:51,903 | WARNING | sample=076aa468273ad5aff362bfc769b0f91b WordPiece 20 span (97, 107) did not overlap an official token; using nearest token 7
+2026-08-07 09:51:51,903 | WARNING | sample=076aa468273ad5aff362bfc769b0f91b WordPiece 21 span (108, 116) did not overlap an official token; using nearest token 7
+2026-08-07 09:51:51,903 | WARNING | sample=076aa468273ad5aff362bfc769b0f91b WordPiece 22 span (117, 121) did not overlap an official token; using nearest token 7
+2026-08-07 09:51:51,904 | WARNING | sample=076aa468273ad5aff362bfc769b0f91b WordPiece 23 span (122, 128) did not overlap an official token; using nearest token 8
+2026-08-07 09:51:51,904 | WARNING | sample=076aa468273ad5aff362bfc769b0f91b WordPiece 24 span (129, 133) did not overlap an official token; using nearest token 8
+2026-08-07 09:51:51,904 | WARNING | sample=076aa468273ad5aff362bfc769b0f91b WordPiece 25 span (134, 136) did not overlap an official token; using nearest token 8
+2026-08-07 09:51:51,904 | WARNING | sample=076aa468273ad5aff362bfc769b0f91b WordPiece 26 span (137, 144) did not overlap an official token; using nearest token 8
+2026-08-07 09:51:51,904 | WARNING | sample=076aa468273ad5aff362bfc769b0f91b WordPiece 27 span (145, 148) did not overlap an official token; using nearest token 8
+2026-08-07 09:51:51,905 | WARNING | sample=076aa468273ad5aff362bfc769b0f91b WordPiece 28 span (149, 152) did not overlap an official token; using nearest token 8
+2026-08-07 09:51:51,905 | WARNING | sample=076aa468273ad5aff362bfc769b0f91b WordPiece 29 span (153, 164) did not overlap an official token; using nearest token 8
+2026-08-07 09:51:51,905 | WARNING | sample=076aa468273ad5aff362bfc769b0f91b WordPiece 30 span (165, 167) did not overlap an official token; using nearest token 8
+2026-08-07 09:51:51,905 | WARNING | sample=076aa468273ad5aff362bfc769b0f91b WordPiece 31 span (168, 172) did not overlap an official token; using nearest token 8
+2026-08-07 09:51:51,905 | WARNING | sample=076aa468273ad5aff362bfc769b0f91b WordPiece 38 span (192, 194) did not overlap an official token; using nearest token 12
+2026-08-07 09:51:52,023 | WARNING | sample=ed6825d1b9203236e342308e952e9d3d could not locate official token 16='-'; using approximate offset
+2026-08-07 09:51:52,765 | WARNING | sample=8ebf563d3513135ff57c10c6c17bb0e7 could not locate official token 11="'s"; using approximate offset
+2026-08-07 09:51:52,765 | WARNING | sample=8ebf563d3513135ff57c10c6c17bb0e7 could not locate official token 22="'s"; using approximate offset
+2026-08-07 09:51:52,899 | WARNING | sample=dbabe98d459803fcd49436cde72fff00 could not locate official token 8='-'; using approximate offset
+2026-08-07 09:51:53,146 | WARNING | sample=3cf3b4d12a6f4c6e0f1d4cb0218e9ff0 could not locate official token 18='-'; using approximate offset
+2026-08-07 09:51:55,643 | WARNING | sample=1d437bf5adbcdd0718e4b3766d0c38e7 WordPiece 7 span (43, 44) did not overlap an official token; using nearest token 6
+2026-08-07 09:51:55,742 | WARNING | sample=037c013e0835a932a614a710da17b50e could not locate official token 20="'s"; using approximate offset
+2026-08-07 09:51:55,743 | WARNING | sample=037c013e0835a932a614a710da17b50e WordPiece 24 span (137, 138) did not overlap an official token; using nearest token 20
+2026-08-07 09:51:56,001 | WARNING | sample=77799d98d61cd1263700a1eb30c2f53a could not locate official token 6="'s"; using approximate offset
+2026-08-07 09:51:56,483 | WARNING | sample=10cb37a20707c81df08a0f4d0bd5fd90 could not locate official token 1="'s"; using approximate offset
+2026-08-07 09:51:56,833 | WARNING | sample=07e351c6f47d49bceafbf1f6e588c1cf could not locate official token 6='"'; using approximate offset
+2026-08-07 09:51:56,834 | WARNING | sample=07e351c6f47d49bceafbf1f6e588c1cf could not locate official token 9="n't"; using approximate offset
+2026-08-07 09:51:57,252 | WARNING | sample=14f3a33a593f0baee643ba324994484f could not locate official token 35="n't"; using approximate offset
+2026-08-07 09:51:57,254 | WARNING | sample=14f3a33a593f0baee643ba324994484f WordPiece 40 span (204, 205) did not overlap an official token; using nearest token 35
+2026-08-07 09:51:57,710 | WARNING | sample=7126aac6548a5d5c920d201a7fcb2e56 could not locate official token 5="'s"; using approximate offset
+2026-08-07 09:51:58,017 | WARNING | sample=845eef2bb28503a6c72265ba998e6c65 WordPiece 23 span (122, 123) did not overlap an official token; using nearest token 20
+2026-08-07 09:51:58,510 | WARNING | sample=69aee36d5c0c75838a6f1cb2193ed317 could not locate official token 3='"'; using approximate offset
+2026-08-07 09:51:58,510 | WARNING | sample=69aee36d5c0c75838a6f1cb2193ed317 could not locate official token 6='"'; using approximate offset
+2026-08-07 09:51:58,888 | WARNING | sample=352c1f6a16ff71d6c520f84c2c264fe6 could not locate official token 17="'s"; using approximate offset
+2026-08-07 09:51:58,899 | WARNING | sample=b2d43a9fd838a83f74cfe246b0f99554 could not locate official token 8="'"; using approximate offset
+2026-08-07 09:51:58,899 | WARNING | sample=b2d43a9fd838a83f74cfe246b0f99554 could not locate official token 11="'"; using approximate offset
+Traceback (most recent call last):
+  File "H:\AURC-master\src\run_AURC_token.py", line 777, in <module>
+    main()
+  File "H:\AURC-master\src\run_AURC_token.py", line 504, in main
+    split_features = feature_builder.build_splits(
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "H:\AURC-master\src\data_utils.py", line 420, in build_splits
+    for (topic, row, split), doc in zip(rows, documents):
+                                    ^^^^^^^^^^^^^^^^^^^^
+  File "D:\anaconda\envs\aurc\Lib\site-packages\spacy\language.py", line 1618, in pipe
+    for doc in docs:
+               ^^^^
+  File "D:\anaconda\envs\aurc\Lib\site-packages\spacy\util.py", line 1763, in _pipe
+    yield from proc.pipe(docs, **kwargs)
+  File "spacy/pipeline/pipe.pyx", line 48, in pipe
+  File "D:\anaconda\envs\aurc\Lib\site-packages\spacy\util.py", line 1763, in _pipe
+    yield from proc.pipe(docs, **kwargs)
+  File "spacy/pipeline/pipe.pyx", line 50, in pipe
+  File "D:\anaconda\envs\aurc\Lib\site-packages\spacy\pipeline\attributeruler.py", line 131, in __call__
+    matches = self.match(doc)
+              ^^^^^^^^^^^^^^^
+  File "D:\anaconda\envs\aurc\Lib\site-packages\spacy\pipeline\attributeruler.py", line 138, in match
+    matches = self.matcher(doc, allow_missing=True, as_spans=False)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+KeyboardInterrupt
+
+进程已结束，退出代码为 -1073741510 (0xC000013A: interrupted by Ctrl+C)

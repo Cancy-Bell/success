@@ -1,0 +1,7 @@
+
+
+--train --crf --target_domain In-Domain --data_dir .\data --input_file AURC_DATA_dict.json --output_dir .\models\aurc_graph --pretrained_weights D:\software\huggingface\bert-large-cased-whole-word-masking --local_files_only --epochs 30 --max_sequence_length 64 --train_batch_size 32 --eval_batch_size 32 --test_batch_size 32 --graph_start_epoch 16 --spacy_model en_core_web_sm --gcn_layers 2 --gcn_dropout 0.1 --hetgat_layers 2 --hetgat_heads 4 --hetgat_dropout 0.1 --au_semantic_threshold 0.5 --au_top_k 3 --au_graph_alpha 0.5 --au_syntax_hops 1 --early_stop_patience 5 --early_stop_min_delta 0.0 --save_predictions --save_alignment_debug --local_files_only
+
+D:\anaconda\envs\aurc\python.exe F:\AURC-master\run_batch_size_experiments.py --batch_sizes 32
+
+D:\anaconda\envs\aurc\python.exe F:\AURC-master\calibrate_o_emission_bias.py

@@ -1,0 +1,214 @@
+D:\anaconda\envs\aurc\python.exe "D:/PyCharm 2026.1.3/plugins/python-ce/helpers/pydev/pydevd.py" --multiprocess --qt-support=auto --client 127.0.0.1 --port 52821 --file C:\Users\TYUST\Desktop\AURC-master\run_batch_size_experiments.py 
+import sys; print('Python %s on %s' % (sys.version, sys.platform))
+已连接到 pydev 调试器(内部版本号 261.25134.203)================================================================================
+Starting physical batch_size=32
+Output: C:\Users\TYUST\Desktop\AURC-master\models\batch_size_comparison\run_20260807_170605\batch_size_32
+Log: C:\Users\TYUST\Desktop\AURC-master\models\batch_size_comparison\run_20260807_170605\batch_size_32\console.log
+================================================================================
+2026-08-07 17:06:18,807 | INFO | device=cuda:0
+2026-08-07 17:06:18,808 | INFO | Best checkpoint criterion = Dev Entity F1
+2026-08-07 17:06:18,808 | INFO | best_model_path=C:\Users\TYUST\Desktop\AURC-master\models\batch_size_comparison\run_20260807_170605\batch_size_32\checkpoints\best_entity_model.pt
+2026-08-07 17:06:18,849 | INFO | Loaded 8 official AURC topics from C:\Users\TYUST\Desktop\AURC-master\data\AURC_DATA_dict.json
+2026-08-07 17:06:34,138 | INFO | AURC preprocessing: 250/6000 samples (train=198 dev=17 test=35)
+2026-08-07 17:06:35,916 | INFO | AURC preprocessing: 500/6000 samples (train=448 dev=17 test=35)
+2026-08-07 17:06:35,957 | WARNING | sample=e485953c94eaacc19c759feeedf8aff7 has 11 WordPieces outside the official annotation token stream (indices [19, 20, 22, 23, 24, 25, 26, 27]...); assigning BIO=O
+2026-08-07 17:06:36,803 | WARNING | sample=82932254624fe4995c4319fb3e019e9a has 10 WordPieces outside the official annotation token stream (indices [29, 30, 31, 32, 33, 34, 35, 36]...); assigning BIO=O
+2026-08-07 17:06:37,625 | INFO | AURC preprocessing: 750/6000 samples (train=535 dev=82 test=133)
+2026-08-07 17:06:39,245 | INFO | AURC preprocessing: 1000/6000 samples (train=700 dev=100 test=200)
+2026-08-07 17:06:40,418 | WARNING | sample=be98156eb94fae06f709e8adf9a8bce5 has 10 WordPieces outside the official annotation token stream (indices [27, 28, 29, 30, 31, 33, 34, 35]...); assigning BIO=O
+2026-08-07 17:06:40,830 | INFO | AURC preprocessing: 1250/6000 samples (train=904 dev=112 test=234)
+2026-08-07 17:06:40,915 | WARNING | sample=59cbacbfe71d66f55c26dd9b10491b06 could not locate official token 15='cell'; leaving it unaligned without shifting later tokens
+2026-08-07 17:06:40,916 | WARNING | sample=59cbacbfe71d66f55c26dd9b10491b06 has 1 WordPieces outside the official annotation token stream (indices [18]); assigning BIO=O
+2026-08-07 17:06:42,074 | WARNING | sample=4cf24cbd1c1bce40ce2db1feb511711a has 11 WordPieces outside the official annotation token stream (indices [28, 29, 30, 31, 32, 33, 35, 36]...); assigning BIO=O
+2026-08-07 17:06:42,501 | INFO | AURC preprocessing: 1500/6000 samples (train=1154 dev=112 test=234)
+2026-08-07 17:06:43,226 | WARNING | sample=664a340852d067af0a010e4ad5e56361 has 14 WordPieces outside the official annotation token stream (indices [27, 28, 30, 31, 32, 33, 34, 35]...); assigning BIO=O
+2026-08-07 17:06:44,061 | INFO | AURC preprocessing: 1750/6000 samples (train=1279 dev=180 test=291)
+2026-08-07 17:06:44,466 | WARNING | sample=3abb67003f9796c079256939b0bc9121 could not locate official token 0="O'Conner"; leaving it unaligned without shifting later tokens
+2026-08-07 17:06:44,467 | WARNING | sample=3abb67003f9796c079256939b0bc9121 could not locate official token 25="'"; leaving it unaligned without shifting later tokens
+2026-08-07 17:06:44,467 | WARNING | sample=3abb67003f9796c079256939b0bc9121 has 5 WordPieces outside the official annotation token stream (indices [0, 1, 2, 29, 30]); assigning BIO=O
+2026-08-07 17:06:45,518 | WARNING | sample=16b7f74c491bdb283cdbbed9961b5509 could not locate official token 14='"'; leaving it unaligned without shifting later tokens
+2026-08-07 17:06:45,518 | WARNING | sample=16b7f74c491bdb283cdbbed9961b5509 could not locate official token 17='"'; leaving it unaligned without shifting later tokens
+2026-08-07 17:06:45,523 | WARNING | sample=a8f2d9d5f9e3087a907b713f94e0be22 has 7 WordPieces outside the official annotation token stream (indices [11, 12, 13, 14, 21, 22, 23]); assigning BIO=O
+2026-08-07 17:06:45,526 | INFO | AURC preprocessing: 2000/6000 samples (train=1400 dev=200 test=400)
+2026-08-07 17:06:47,082 | INFO | AURC preprocessing: 2250/6000 samples (train=1617 dev=213 test=420)
+2026-08-07 17:06:47,651 | WARNING | sample=347b0b5b285d84ac902db48b9a53e328 has 38 WordPieces outside the official annotation token stream (indices [13, 14, 15, 16, 17, 18, 19, 20]...); assigning BIO=O
+2026-08-07 17:06:48,729 | INFO | AURC preprocessing: 2500/6000 samples (train=1798 dev=252 test=450)
+2026-08-07 17:06:50,280 | INFO | AURC preprocessing: 2750/6000 samples (train=1991 dev=252 test=507)
+2026-08-07 17:06:51,844 | INFO | AURC preprocessing: 3000/6000 samples (train=2100 dev=300 test=600)
+2026-08-07 17:06:53,291 | INFO | AURC preprocessing: 3250/6000 samples (train=2350 dev=300 test=600)
+2026-08-07 17:06:54,737 | INFO | AURC preprocessing: 3500/6000 samples (train=2478 dev=344 test=678)
+2026-08-07 17:06:54,793 | WARNING | sample=3698ac93d636e458e5445f6d99139164 could not locate official token 7='-'; leaving it unaligned without shifting later tokens
+2026-08-07 17:06:54,794 | WARNING | sample=3698ac93d636e458e5445f6d99139164 has 1 WordPieces outside the official annotation token stream (indices [8]); assigning BIO=O
+2026-08-07 17:06:56,272 | INFO | AURC preprocessing: 3750/6000 samples (train=2649 dev=382 test=719)
+2026-08-07 17:06:57,762 | INFO | AURC preprocessing: 4000/6000 samples (train=2800 dev=400 test=800)
+2026-08-07 17:06:59,135 | WARNING | sample=3a7e2feebace7f17c126759462f1d80f could not locate official token 9="n't"; leaving it unaligned without shifting later tokens
+2026-08-07 17:06:59,136 | WARNING | sample=3a7e2feebace7f17c126759462f1d80f has 1 WordPieces outside the official annotation token stream (indices [9]); assigning BIO=O
+2026-08-07 17:06:59,629 | INFO | AURC preprocessing: 4250/6000 samples (train=3037 dev=413 test=800)
+2026-08-07 17:07:01,335 | INFO | AURC preprocessing: 4500/6000 samples (train=3186 dev=439 test=875)
+2026-08-07 17:07:03,026 | INFO | AURC preprocessing: 4750/6000 samples (train=3328 dev=478 test=944)
+2026-08-07 17:07:04,653 | INFO | AURC preprocessing: 5000/6000 samples (train=3500 dev=500 test=1000)
+2026-08-07 17:07:05,073 | WARNING | sample=1d437bf5adbcdd0718e4b3766d0c38e7 has 1 WordPieces outside the official annotation token stream (indices [7]); assigning BIO=O
+2026-08-07 17:07:06,276 | INFO | AURC preprocessing: 5250/6000 samples (train=3743 dev=507 test=1000)
+2026-08-07 17:07:06,334 | WARNING | sample=07e351c6f47d49bceafbf1f6e588c1cf could not locate official token 9="n't"; leaving it unaligned without shifting later tokens
+2026-08-07 17:07:06,335 | WARNING | sample=07e351c6f47d49bceafbf1f6e588c1cf has 2 WordPieces outside the official annotation token stream (indices [9, 10]); assigning BIO=O
+2026-08-07 17:07:06,758 | WARNING | sample=14f3a33a593f0baee643ba324994484f could not locate official token 35="n't"; leaving it unaligned without shifting later tokens
+2026-08-07 17:07:06,759 | WARNING | sample=14f3a33a593f0baee643ba324994484f has 2 WordPieces outside the official annotation token stream (indices [39, 40]); assigning BIO=O
+2026-08-07 17:07:07,512 | WARNING | sample=845eef2bb28503a6c72265ba998e6c65 has 1 WordPieces outside the official annotation token stream (indices [23]); assigning BIO=O
+2026-08-07 17:07:07,656 | INFO | AURC preprocessing: 5500/6000 samples (train=3885 dev=536 test=1079)
+2026-08-07 17:07:08,007 | WARNING | sample=69aee36d5c0c75838a6f1cb2193ed317 could not locate official token 3='"'; leaving it unaligned without shifting later tokens
+2026-08-07 17:07:08,007 | WARNING | sample=69aee36d5c0c75838a6f1cb2193ed317 could not locate official token 6='"'; leaving it unaligned without shifting later tokens
+2026-08-07 17:07:09,261 | INFO | AURC preprocessing: 5750/6000 samples (train=4021 dev=572 test=1157)
+2026-08-07 17:07:10,947 | INFO | AURC preprocessing: 6000/6000 samples (train=4200 dev=600 test=1200)
+2026-08-07 17:07:10,964 | INFO | train features=4200
+2026-08-07 17:07:10,965 | INFO | dev features=600
+2026-08-07 17:07:10,965 | INFO | test features=1200
+Some weights of BertForTokenClassification were not initialized from the model checkpoint at D:\software\huggingface\bert-large-cased-whole-word-masking and are newly initialized: ['classifier.bias', 'classifier.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+2026-08-07 17:07:13,311 | INFO | Stage 1 architecture: Topic-aware BERT + Dependency GCN + Semantic-Syntax Fusion + BIO-CRF
+2026-08-07 17:07:13,312 | INFO | Stage 2 reasoning modules are absent and will be created at epoch 16.
+2026-08-07 17:07:16,238 | INFO | Optimizer initialized: epochs=30 trainable_parameters=343033896 steps=3960 warmup_steps=396
+2026-08-07 17:07:16,239 | INFO | Epoch 1 | 2026-08-07 17:07:16.239142
+2026-08-07 17:08:00,320 | INFO | Optimization losses: total=30.5328 CRF=30.5328 SeqAU=0.0000 HetGAT=0.0000 Fusion=0.0000 Document=0.0000 active=False
+2026-08-07 17:08:28,914 | INFO | TRAIN: loss=10.7109 | official token/segment/sentence F1=0.4848/0.5034/0.4748 | AU span F1=0.0733 | AU stance F1=0.6345 | Entity F1=0.0470 | Document F1=0.0000
+2026-08-07 17:08:28,914 | INFO | TRAIN losses: CRF=10.7109 SeqAU=0.0000 HetGAT=0.0000 Fusion=0.0000 Document=0.0000 graph_training_active=False
+2026-08-07 17:08:33,184 | INFO | DEV: loss=6.0429 | official token/segment/sentence F1=0.4745/0.5111/0.4727 | AU span F1=0.0863 | AU stance F1=0.6190 | Entity F1=0.0540 | Document F1=0.0000
+2026-08-07 17:08:33,185 | INFO | DEV losses: CRF=6.0429 SeqAU=0.0000 HetGAT=0.0000 Fusion=0.0000 Document=0.0000 graph_training_active=False
+2026-08-07 17:08:41,562 | INFO | TEST: loss=22.5782 | official token/segment/sentence F1=0.4776/0.5008/0.4677 | AU span F1=0.0938 | AU stance F1=0.5256 | Entity F1=0.0496 | Document F1=0.0000
+2026-08-07 17:08:41,562 | INFO | TEST losses: CRF=22.5782 SeqAU=0.0000 HetGAT=0.0000 Fusion=0.0000 Document=0.0000 graph_training_active=False
+2026-08-07 17:08:41,622 | INFO | Early stopping OFF: Boundary Learning Stage (BERT+GCN+Semantic-Syntax Fusion+BIO-CRF) must complete through epoch 15.
+2026-08-07 17:08:41,622 | INFO | Epoch 2 | 2026-08-07 17:08:41.622806
+2026-08-07 17:09:26,031 | INFO | Optimization losses: total=10.4343 CRF=10.4343 SeqAU=0.0000 HetGAT=0.0000 Fusion=0.0000 Document=0.0000 active=False
+2026-08-07 17:09:54,506 | INFO | TRAIN: loss=9.2686 | official token/segment/sentence F1=0.5881/0.5827/0.6076 | AU span F1=0.2122 | AU stance F1=0.6952 | Entity F1=0.1519 | Document F1=0.0000
+2026-08-07 17:09:54,507 | INFO | TRAIN losses: CRF=9.2686 SeqAU=0.0000 HetGAT=0.0000 Fusion=0.0000 Document=0.0000 graph_training_active=False
+2026-08-07 17:09:58,766 | INFO | DEV: loss=4.6571 | official token/segment/sentence F1=0.5663/0.5667/0.5857 | AU span F1=0.2209 | AU stance F1=0.7149 | Entity F1=0.1591 | Document F1=0.0000
+2026-08-07 17:09:58,766 | INFO | DEV losses: CRF=4.6571 SeqAU=0.0000 HetGAT=0.0000 Fusion=0.0000 Document=0.0000 graph_training_active=False
+2026-08-07 17:10:07,101 | INFO | TEST: loss=21.4068 | official token/segment/sentence F1=0.5554/0.5586/0.5778 | AU span F1=0.2125 | AU stance F1=0.7307 | Entity F1=0.1579 | Document F1=0.0000
+2026-08-07 17:10:07,101 | INFO | TEST losses: CRF=21.4068 SeqAU=0.0000 HetGAT=0.0000 Fusion=0.0000 Document=0.0000 graph_training_active=False
+2026-08-07 17:10:07,162 | INFO | Early stopping OFF: Boundary Learning Stage (BERT+GCN+Semantic-Syntax Fusion+BIO-CRF) must complete through epoch 15.
+2026-08-07 17:10:07,162 | INFO | Epoch 3 | 2026-08-07 17:10:07.162583
+2026-08-07 17:10:51,178 | INFO | Optimization losses: total=9.5622 CRF=9.5622 SeqAU=0.0000 HetGAT=0.0000 Fusion=0.0000 Document=0.0000 active=False
+2026-08-07 17:11:19,635 | INFO | TRAIN: loss=8.1621 | official token/segment/sentence F1=0.6572/0.6500/0.6637 | AU span F1=0.3147 | AU stance F1=0.7713 | Entity F1=0.2438 | Document F1=0.0000
+2026-08-07 17:11:19,635 | INFO | TRAIN losses: CRF=8.1621 SeqAU=0.0000 HetGAT=0.0000 Fusion=0.0000 Document=0.0000 graph_training_active=False
+2026-08-07 17:11:23,805 | INFO | DEV: loss=3.5996 | official token/segment/sentence F1=0.6156/0.6272/0.6231 | AU span F1=0.2961 | AU stance F1=0.7476 | Entity F1=0.2237 | Document F1=0.0000
+2026-08-07 17:11:23,805 | INFO | DEV losses: CRF=3.5996 SeqAU=0.0000 HetGAT=0.0000 Fusion=0.0000 Document=0.0000 graph_training_active=False
+2026-08-07 17:11:32,068 | INFO | TEST: loss=20.3209 | official token/segment/sentence F1=0.6086/0.6147/0.6242 | AU span F1=0.2683 | AU stance F1=0.7373 | Entity F1=0.2000 | Document F1=0.0000
+2026-08-07 17:11:32,069 | INFO | TEST losses: CRF=20.3209 SeqAU=0.0000 HetGAT=0.0000 Fusion=0.0000 Document=0.0000 graph_training_active=False
+2026-08-07 17:11:32,129 | INFO | Early stopping OFF: Boundary Learning Stage (BERT+GCN+Semantic-Syntax Fusion+BIO-CRF) must complete through epoch 15.
+2026-08-07 17:11:32,130 | INFO | Epoch 4 | 2026-08-07 17:11:32.130946
+2026-08-07 17:12:16,173 | INFO | Optimization losses: total=8.9023 CRF=8.9023 SeqAU=0.0000 HetGAT=0.0000 Fusion=0.0000 Document=0.0000 active=False
+2026-08-07 17:12:44,639 | INFO | TRAIN: loss=8.1290 | official token/segment/sentence F1=0.6529/0.6496/0.6660 | AU span F1=0.3901 | AU stance F1=0.7311 | Entity F1=0.2930 | Document F1=0.0000
+2026-08-07 17:12:44,639 | INFO | TRAIN losses: CRF=8.1290 SeqAU=0.0000 HetGAT=0.0000 Fusion=0.0000 Document=0.0000 graph_training_active=False
+2026-08-07 17:12:48,853 | INFO | DEV: loss=3.7375 | official token/segment/sentence F1=0.6047/0.6006/0.6182 | AU span F1=0.3856 | AU stance F1=0.7104 | Entity F1=0.2820 | Document F1=0.0000
+2026-08-07 17:12:48,854 | INFO | DEV losses: CRF=3.7375 SeqAU=0.0000 HetGAT=0.0000 Fusion=0.0000 Document=0.0000 graph_training_active=False
+2026-08-07 17:12:57,178 | INFO | TEST: loss=20.6648 | official token/segment/sentence F1=0.5886/0.5989/0.6111 | AU span F1=0.3741 | AU stance F1=0.7245 | Entity F1=0.2780 | Document F1=0.0000
+2026-08-07 17:12:57,179 | INFO | TEST losses: CRF=20.6648 SeqAU=0.0000 HetGAT=0.0000 Fusion=0.0000 Document=0.0000 graph_training_active=False
+2026-08-07 17:12:57,242 | INFO | Early stopping OFF: Boundary Learning Stage (BERT+GCN+Semantic-Syntax Fusion+BIO-CRF) must complete through epoch 15.
+2026-08-07 17:12:57,242 | INFO | Epoch 5 | 2026-08-07 17:12:57.242837
+2026-08-07 17:13:41,058 | INFO | Optimization losses: total=8.1785 CRF=8.1785 SeqAU=0.0000 HetGAT=0.0000 Fusion=0.0000 Document=0.0000 active=False
+2026-08-07 17:14:09,619 | INFO | TRAIN: loss=7.8896 | official token/segment/sentence F1=0.6993/0.6600/0.7256 | AU span F1=0.4244 | AU stance F1=0.8691 | Entity F1=0.3692 | Document F1=0.0000
+2026-08-07 17:14:09,619 | INFO | TRAIN losses: CRF=7.8896 SeqAU=0.0000 HetGAT=0.0000 Fusion=0.0000 Document=0.0000 graph_training_active=False
+2026-08-07 17:14:13,876 | INFO | DEV: loss=3.9230 | official token/segment/sentence F1=0.6114/0.5606/0.6235 | AU span F1=0.4036 | AU stance F1=0.8012 | Entity F1=0.3249 | Document F1=0.0000
+2026-08-07 17:14:13,876 | INFO | DEV losses: CRF=3.9230 SeqAU=0.0000 HetGAT=0.0000 Fusion=0.0000 Document=0.0000 graph_training_active=False
+2026-08-07 17:14:22,173 | INFO | TEST: loss=20.5738 | official token/segment/sentence F1=0.6134/0.5734/0.6388 | AU span F1=0.3947 | AU stance F1=0.8184 | Entity F1=0.3238 | Document F1=0.0000
+2026-08-07 17:14:22,174 | INFO | TEST losses: CRF=20.5738 SeqAU=0.0000 HetGAT=0.0000 Fusion=0.0000 Document=0.0000 graph_training_active=False
+2026-08-07 17:14:22,238 | INFO | Early stopping OFF: Boundary Learning Stage (BERT+GCN+Semantic-Syntax Fusion+BIO-CRF) must complete through epoch 15.
+2026-08-07 17:14:22,238 | INFO | Epoch 6 | 2026-08-07 17:14:22.238451
+2026-08-07 17:15:06,313 | INFO | Optimization losses: total=7.8198 CRF=7.8198 SeqAU=0.0000 HetGAT=0.0000 Fusion=0.0000 Document=0.0000 active=False
+2026-08-07 17:15:34,803 | INFO | TRAIN: loss=6.8554 | official token/segment/sentence F1=0.7709/0.7429/0.7899 | AU span F1=0.5076 | AU stance F1=0.8883 | Entity F1=0.4510 | Document F1=0.0000
+2026-08-07 17:15:34,804 | INFO | TRAIN losses: CRF=6.8554 SeqAU=0.0000 HetGAT=0.0000 Fusion=0.0000 Document=0.0000 graph_training_active=False
+2026-08-07 17:15:39,043 | INFO | DEV: loss=2.7703 | official token/segment/sentence F1=0.6746/0.6339/0.6792 | AU span F1=0.4527 | AU stance F1=0.8121 | Entity F1=0.3676 | Document F1=0.0000
+2026-08-07 17:15:39,043 | INFO | DEV losses: CRF=2.7703 SeqAU=0.0000 HetGAT=0.0000 Fusion=0.0000 Document=0.0000 graph_training_active=False
+2026-08-07 17:15:47,437 | INFO | TEST: loss=19.4975 | official token/segment/sentence F1=0.6760/0.6458/0.7010 | AU span F1=0.4432 | AU stance F1=0.8497 | Entity F1=0.3766 | Document F1=0.0000
+2026-08-07 17:15:47,437 | INFO | TEST losses: CRF=19.4975 SeqAU=0.0000 HetGAT=0.0000 Fusion=0.0000 Document=0.0000 graph_training_active=False
+2026-08-07 17:15:47,500 | INFO | Early stopping OFF: Boundary Learning Stage (BERT+GCN+Semantic-Syntax Fusion+BIO-CRF) must complete through epoch 15.
+2026-08-07 17:15:47,500 | INFO | Epoch 7 | 2026-08-07 17:15:47.500737
+2026-08-07 17:16:31,519 | INFO | Optimization losses: total=7.2580 CRF=7.2580 SeqAU=0.0000 HetGAT=0.0000 Fusion=0.0000 Document=0.0000 active=False
+2026-08-07 17:16:59,950 | INFO | TRAIN: loss=7.2380 | official token/segment/sentence F1=0.7409/0.7002/0.7544 | AU span F1=0.5067 | AU stance F1=0.8797 | Entity F1=0.4462 | Document F1=0.0000
+2026-08-07 17:16:59,951 | INFO | TRAIN losses: CRF=7.2380 SeqAU=0.0000 HetGAT=0.0000 Fusion=0.0000 Document=0.0000 graph_training_active=False
+2026-08-07 17:17:04,192 | INFO | DEV: loss=3.5423 | official token/segment/sentence F1=0.6300/0.5783/0.6325 | AU span F1=0.4659 | AU stance F1=0.7933 | Entity F1=0.3717 | Document F1=0.0000
+2026-08-07 17:17:04,193 | INFO | DEV losses: CRF=3.5423 SeqAU=0.0000 HetGAT=0.0000 Fusion=0.0000 Document=0.0000 graph_training_active=False
+2026-08-07 17:17:12,724 | INFO | TEST: loss=20.2833 | official token/segment/sentence F1=0.6241/0.5824/0.6430 | AU span F1=0.4449 | AU stance F1=0.8024 | Entity F1=0.3581 | Document F1=0.0000
+2026-08-07 17:17:12,724 | INFO | TEST losses: CRF=20.2833 SeqAU=0.0000 HetGAT=0.0000 Fusion=0.0000 Document=0.0000 graph_training_active=False
+2026-08-07 17:17:12,789 | INFO | Early stopping OFF: Boundary Learning Stage (BERT+GCN+Semantic-Syntax Fusion+BIO-CRF) must complete through epoch 15.
+2026-08-07 17:17:12,789 | INFO | Epoch 8 | 2026-08-07 17:17:12.789712
+2026-08-07 17:17:56,535 | INFO | Optimization losses: total=7.1030 CRF=7.1030 SeqAU=0.0000 HetGAT=0.0000 Fusion=0.0000 Document=0.0000 active=False
+2026-08-07 17:18:25,092 | INFO | TRAIN: loss=6.6619 | official token/segment/sentence F1=0.7985/0.7679/0.8128 | AU span F1=0.5570 | AU stance F1=0.9065 | Entity F1=0.5050 | Document F1=0.0000
+2026-08-07 17:18:25,092 | INFO | TRAIN losses: CRF=6.6619 SeqAU=0.0000 HetGAT=0.0000 Fusion=0.0000 Document=0.0000 graph_training_active=False
+2026-08-07 17:18:29,242 | INFO | DEV: loss=3.0552 | official token/segment/sentence F1=0.6718/0.6253/0.6822 | AU span F1=0.4897 | AU stance F1=0.8348 | Entity F1=0.4098 | Document F1=0.0000
+2026-08-07 17:18:29,243 | INFO | DEV losses: CRF=3.0552 SeqAU=0.0000 HetGAT=0.0000 Fusion=0.0000 Document=0.0000 graph_training_active=False
+2026-08-07 17:18:37,375 | INFO | TEST: loss=19.7594 | official token/segment/sentence F1=0.6708/0.6274/0.6889 | AU span F1=0.4641 | AU stance F1=0.8533 | Entity F1=0.3962 | Document F1=0.0000
+2026-08-07 17:18:37,375 | INFO | TEST losses: CRF=19.7594 SeqAU=0.0000 HetGAT=0.0000 Fusion=0.0000 Document=0.0000 graph_training_active=False
+2026-08-07 17:18:37,438 | INFO | Early stopping OFF: Boundary Learning Stage (BERT+GCN+Semantic-Syntax Fusion+BIO-CRF) must complete through epoch 15.
+2026-08-07 17:18:37,438 | INFO | Epoch 9 | 2026-08-07 17:18:37.438260
+2026-08-07 17:19:21,152 | INFO | Optimization losses: total=6.7882 CRF=6.7882 SeqAU=0.0000 HetGAT=0.0000 Fusion=0.0000 Document=0.0000 active=False
+2026-08-07 17:19:49,759 | INFO | TRAIN: loss=6.6626 | official token/segment/sentence F1=0.7911/0.7668/0.8157 | AU span F1=0.5472 | AU stance F1=0.9237 | Entity F1=0.5054 | Document F1=0.0000
+2026-08-07 17:19:49,759 | INFO | TRAIN losses: CRF=6.6626 SeqAU=0.0000 HetGAT=0.0000 Fusion=0.0000 Document=0.0000 graph_training_active=False
+2026-08-07 17:19:53,960 | INFO | DEV: loss=3.2346 | official token/segment/sentence F1=0.6547/0.6192/0.6716 | AU span F1=0.4897 | AU stance F1=0.8106 | Entity F1=0.3974 | Document F1=0.0000
+2026-08-07 17:19:53,960 | INFO | DEV losses: CRF=3.2346 SeqAU=0.0000 HetGAT=0.0000 Fusion=0.0000 Document=0.0000 graph_training_active=False
+2026-08-07 17:20:02,588 | INFO | TEST: loss=19.9839 | official token/segment/sentence F1=0.6473/0.6091/0.6733 | AU span F1=0.4485 | AU stance F1=0.8391 | Entity F1=0.3765 | Document F1=0.0000
+2026-08-07 17:20:02,588 | INFO | TEST losses: CRF=19.9839 SeqAU=0.0000 HetGAT=0.0000 Fusion=0.0000 Document=0.0000 graph_training_active=False
+2026-08-07 17:20:02,653 | INFO | Early stopping OFF: Boundary Learning Stage (BERT+GCN+Semantic-Syntax Fusion+BIO-CRF) must complete through epoch 15.
+2026-08-07 17:20:02,653 | INFO | Epoch 10 | 2026-08-07 17:20:02.653591
+2026-08-07 17:20:46,419 | INFO | Optimization losses: total=6.6039 CRF=6.6039 SeqAU=0.0000 HetGAT=0.0000 Fusion=0.0000 Document=0.0000 active=False
+2026-08-07 17:21:14,759 | INFO | TRAIN: loss=6.2067 | official token/segment/sentence F1=0.8503/0.8220/0.8580 | AU span F1=0.6178 | AU stance F1=0.9366 | Entity F1=0.5787 | Document F1=0.0000
+2026-08-07 17:21:14,759 | INFO | TRAIN losses: CRF=6.2067 SeqAU=0.0000 HetGAT=0.0000 Fusion=0.0000 Document=0.0000 graph_training_active=False
+2026-08-07 17:21:19,083 | INFO | DEV: loss=2.9628 | official token/segment/sentence F1=0.6997/0.6566/0.7005 | AU span F1=0.5144 | AU stance F1=0.8376 | Entity F1=0.4308 | Document F1=0.0000
+2026-08-07 17:21:19,084 | INFO | DEV losses: CRF=2.9628 SeqAU=0.0000 HetGAT=0.0000 Fusion=0.0000 Document=0.0000 graph_training_active=False
+2026-08-07 17:21:27,276 | INFO | TEST: loss=19.6503 | official token/segment/sentence F1=0.6890/0.6501/0.7064 | AU span F1=0.4664 | AU stance F1=0.8736 | Entity F1=0.4074 | Document F1=0.0000
+2026-08-07 17:21:27,276 | INFO | TEST losses: CRF=19.6503 SeqAU=0.0000 HetGAT=0.0000 Fusion=0.0000 Document=0.0000 graph_training_active=False
+2026-08-07 17:21:27,342 | INFO | Early stopping OFF: Boundary Learning Stage (BERT+GCN+Semantic-Syntax Fusion+BIO-CRF) must complete through epoch 15.
+2026-08-07 17:21:27,342 | INFO | Epoch 11 | 2026-08-07 17:21:27.342004
+2026-08-07 17:22:11,251 | INFO | Optimization losses: total=6.4587 CRF=6.4587 SeqAU=0.0000 HetGAT=0.0000 Fusion=0.0000 Document=0.0000 active=False
+2026-08-07 17:22:40,309 | INFO | TRAIN: loss=6.4947 | official token/segment/sentence F1=0.8139/0.7859/0.8297 | AU span F1=0.5872 | AU stance F1=0.9447 | Entity F1=0.5548 | Document F1=0.0000
+2026-08-07 17:22:40,310 | INFO | TRAIN losses: CRF=6.4947 SeqAU=0.0000 HetGAT=0.0000 Fusion=0.0000 Document=0.0000 graph_training_active=False
+2026-08-07 17:22:44,548 | INFO | DEV: loss=3.6623 | official token/segment/sentence F1=0.6583/0.6067/0.6611 | AU span F1=0.5031 | AU stance F1=0.8235 | Entity F1=0.4143 | Document F1=0.0000
+2026-08-07 17:22:44,548 | INFO | DEV losses: CRF=3.6623 SeqAU=0.0000 HetGAT=0.0000 Fusion=0.0000 Document=0.0000 graph_training_active=False
+2026-08-07 17:22:52,815 | INFO | TEST: loss=20.2601 | official token/segment/sentence F1=0.6485/0.6071/0.6686 | AU span F1=0.4532 | AU stance F1=0.8429 | Entity F1=0.3821 | Document F1=0.0000
+2026-08-07 17:22:52,815 | INFO | TEST losses: CRF=20.2601 SeqAU=0.0000 HetGAT=0.0000 Fusion=0.0000 Document=0.0000 graph_training_active=False
+2026-08-07 17:22:52,882 | INFO | Early stopping OFF: Boundary Learning Stage (BERT+GCN+Semantic-Syntax Fusion+BIO-CRF) must complete through epoch 15.
+2026-08-07 17:22:52,883 | INFO | Epoch 12 | 2026-08-07 17:22:52.883235
+2026-08-07 17:23:39,710 | INFO | Optimization losses: total=6.2601 CRF=6.2601 SeqAU=0.0000 HetGAT=0.0000 Fusion=0.0000 Document=0.0000 active=False
+2026-08-07 17:24:14,182 | INFO | TRAIN: loss=5.9211 | official token/segment/sentence F1=0.8854/0.8666/0.8952 | AU span F1=0.6660 | AU stance F1=0.9547 | Entity F1=0.6359 | Document F1=0.0000
+2026-08-07 17:24:14,182 | INFO | TRAIN losses: CRF=5.9211 SeqAU=0.0000 HetGAT=0.0000 Fusion=0.0000 Document=0.0000 graph_training_active=False
+2026-08-07 17:24:19,619 | INFO | DEV: loss=3.2136 | official token/segment/sentence F1=0.7037/0.6663/0.7068 | AU span F1=0.5185 | AU stance F1=0.8416 | Entity F1=0.4365 | Document F1=0.0000
+2026-08-07 17:24:19,619 | INFO | DEV losses: CRF=3.2136 SeqAU=0.0000 HetGAT=0.0000 Fusion=0.0000 Document=0.0000 graph_training_active=False
+2026-08-07 17:24:30,115 | INFO | TEST: loss=19.9311 | official token/segment/sentence F1=0.6885/0.6539/0.7098 | AU span F1=0.4823 | AU stance F1=0.8606 | Entity F1=0.4152 | Document F1=0.0000
+2026-08-07 17:24:30,115 | INFO | TEST losses: CRF=19.9311 SeqAU=0.0000 HetGAT=0.0000 Fusion=0.0000 Document=0.0000 graph_training_active=False
+2026-08-07 17:24:30,197 | INFO | Early stopping OFF: Boundary Learning Stage (BERT+GCN+Semantic-Syntax Fusion+BIO-CRF) must complete through epoch 15.
+2026-08-07 17:24:30,198 | INFO | Epoch 13 | 2026-08-07 17:24:30.198723
+2026-08-07 17:25:22,974 | INFO | Optimization losses: total=6.2191 CRF=6.2191 SeqAU=0.0000 HetGAT=0.0000 Fusion=0.0000 Document=0.0000 active=False
+2026-08-07 17:25:59,516 | INFO | TRAIN: loss=6.7543 | official token/segment/sentence F1=0.8039/0.7621/0.8105 | AU span F1=0.5901 | AU stance F1=0.9643 | Entity F1=0.5691 | Document F1=0.0000
+2026-08-07 17:25:59,516 | INFO | TRAIN losses: CRF=6.7543 SeqAU=0.0000 HetGAT=0.0000 Fusion=0.0000 Document=0.0000 graph_training_active=False
+2026-08-07 17:26:05,371 | INFO | DEV: loss=4.7310 | official token/segment/sentence F1=0.6317/0.5656/0.6253 | AU span F1=0.4847 | AU stance F1=0.8252 | Entity F1=0.4000 | Document F1=0.0000
+2026-08-07 17:26:05,371 | INFO | DEV losses: CRF=4.7310 SeqAU=0.0000 HetGAT=0.0000 Fusion=0.0000 Document=0.0000 graph_training_active=False
+2026-08-07 17:26:15,949 | INFO | TEST: loss=21.3071 | official token/segment/sentence F1=0.6437/0.5914/0.6586 | AU span F1=0.4589 | AU stance F1=0.8561 | Entity F1=0.3928 | Document F1=0.0000
+2026-08-07 17:26:15,950 | INFO | TEST losses: CRF=21.3071 SeqAU=0.0000 HetGAT=0.0000 Fusion=0.0000 Document=0.0000 graph_training_active=False
+2026-08-07 17:26:16,049 | INFO | Early stopping OFF: Boundary Learning Stage (BERT+GCN+Semantic-Syntax Fusion+BIO-CRF) must complete through epoch 15.
+2026-08-07 17:26:16,049 | INFO | Epoch 14 | 2026-08-07 17:26:16.049965
+2026-08-07 17:27:08,285 | INFO | Optimization losses: total=6.0943 CRF=6.0943 SeqAU=0.0000 HetGAT=0.0000 Fusion=0.0000 Document=0.0000 active=False
+2026-08-07 17:27:44,976 | INFO | TRAIN: loss=6.0510 | official token/segment/sentence F1=0.8711/0.8421/0.8778 | AU span F1=0.6578 | AU stance F1=0.9633 | Entity F1=0.6336 | Document F1=0.0000
+2026-08-07 17:27:44,976 | INFO | TRAIN losses: CRF=6.0510 SeqAU=0.0000 HetGAT=0.0000 Fusion=0.0000 Document=0.0000 graph_training_active=False
+2026-08-07 17:27:50,660 | INFO | DEV: loss=3.9067 | official token/segment/sentence F1=0.6648/0.6211/0.6703 | AU span F1=0.5056 | AU stance F1=0.8514 | Entity F1=0.4309 | Document F1=0.0000
+2026-08-07 17:27:50,661 | INFO | DEV losses: CRF=3.9067 SeqAU=0.0000 HetGAT=0.0000 Fusion=0.0000 Document=0.0000 graph_training_active=False
+2026-08-07 17:28:01,314 | INFO | TEST: loss=20.5380 | official token/segment/sentence F1=0.6661/0.6216/0.6855 | AU span F1=0.4631 | AU stance F1=0.8559 | Entity F1=0.3966 | Document F1=0.0000
+2026-08-07 17:28:01,315 | INFO | TEST losses: CRF=20.5380 SeqAU=0.0000 HetGAT=0.0000 Fusion=0.0000 Document=0.0000 graph_training_active=False
+2026-08-07 17:28:01,391 | INFO | Early stopping OFF: Boundary Learning Stage (BERT+GCN+Semantic-Syntax Fusion+BIO-CRF) must complete through epoch 15.
+2026-08-07 17:28:01,392 | INFO | Epoch 15 | 2026-08-07 17:28:01.392749
+2026-08-07 17:28:53,675 | INFO | Optimization losses: total=5.9644 CRF=5.9644 SeqAU=0.0000 HetGAT=0.0000 Fusion=0.0000 Document=0.0000 active=False
+2026-08-07 17:29:30,192 | INFO | TRAIN: loss=5.5896 | official token/segment/sentence F1=0.9273/0.9164/0.9387 | AU span F1=0.7190 | AU stance F1=0.9695 | Entity F1=0.6971 | Document F1=0.0000
+2026-08-07 17:29:30,193 | INFO | TRAIN losses: CRF=5.5896 SeqAU=0.0000 HetGAT=0.0000 Fusion=0.0000 Document=0.0000 graph_training_active=False
+2026-08-07 17:29:35,678 | INFO | DEV: loss=3.3181 | official token/segment/sentence F1=0.7076/0.6756/0.7103 | AU span F1=0.5363 | AU stance F1=0.8568 | Entity F1=0.4596 | Document F1=0.0000
+2026-08-07 17:29:35,679 | INFO | DEV losses: CRF=3.3181 SeqAU=0.0000 HetGAT=0.0000 Fusion=0.0000 Document=0.0000 graph_training_active=False
+2026-08-07 17:29:47,025 | INFO | TEST: loss=19.9151 | official token/segment/sentence F1=0.6952/0.6635/0.7153 | AU span F1=0.4700 | AU stance F1=0.8778 | Entity F1=0.4126 | Document F1=0.0000
+2026-08-07 17:29:47,025 | INFO | TEST losses: CRF=19.9151 SeqAU=0.0000 HetGAT=0.0000 Fusion=0.0000 Document=0.0000 graph_training_active=False
+2026-08-07 17:29:47,100 | INFO | Early stopping OFF: Boundary Learning Stage (BERT+GCN+Semantic-Syntax Fusion+BIO-CRF) must complete through epoch 15.
+2026-08-07 17:29:47,101 | INFO | Epoch 16 | 2026-08-07 17:29:47.101865
+2026-08-07 17:29:47,423 | INFO | ========================================================================
+2026-08-07 17:29:47,423 | INFO | Argument Reasoning Stage activated structurally.
+2026-08-07 17:29:47,423 | INFO | graph_start_epoch = 16
+2026-08-07 17:29:47,424 | INFO | New Stage-2 modules = au_topic_fusion, document_topic_fusion, hetgat, sequence_au_classifier, graph_au_classifier, dynamic_fusion_gate, document_graph_topic_fusion, document_classifier
+2026-08-07 17:29:47,424 | INFO | Added to existing optimizer = 106 tensors / 39911504 parameters; Stage-1 AdamW state retained
+2026-08-07 17:29:47,424 | INFO | Training AU graph source = GOLD BIO
+2026-08-07 17:29:47,425 | INFO | Loss = CRF + SeqAU + HetGAT + Fusion + Document
+2026-08-07 17:29:47,425 | INFO | Early stopping monitor = Dev Entity F1
+2026-08-07 17:29:47,425 | INFO | ========================================================================
