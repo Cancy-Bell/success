@@ -1,0 +1,76 @@
+D:\anaconda\envs\aurc\python.exe "D:/PyCharm 2026.1.3/plugins/python-ce/helpers/pydev/pydevd.py" --multiprocess --qt-support=auto --client 127.0.0.1 --port 56951 --file C:\Users\TYUST\Desktop\AURC-master\run_o_bias_sweep.py 
+import sys; print('Python %s on %s' % (sys.version, sys.platform))
+已连接到 pydev 调试器(内部版本号 261.25134.203)O-bias sweep: initial_o_bias=0.25 (1/3)
+================================================================================
+Starting physical batch_size=32
+Output: C:\Users\TYUST\Desktop\AURC-master\models\o_bias_sweep\run_20260810_081140\o_bias_0_25
+Log: C:\Users\TYUST\Desktop\AURC-master\models\o_bias_sweep\run_20260810_081140\o_bias_0_25\console.log
+================================================================================
+2026-08-10 08:11:54,291 | INFO | device=cuda:0
+2026-08-10 08:11:54,292 | INFO | Best checkpoint criterion = Dev Official Token macro-F1
+2026-08-10 08:11:54,292 | INFO | best_model_path=C:\Users\TYUST\Desktop\AURC-master\models\o_bias_sweep\run_20260810_081140\o_bias_0_25\checkpoints\best_token_model.pt
+2026-08-10 08:11:54,329 | INFO | Loaded 8 official AURC topics from C:\Users\TYUST\Desktop\AURC-master\data\AURC_DATA_dict.json
+2026-08-10 08:12:09,594 | INFO | AURC preprocessing: 250/6000 samples (train=198 dev=17 test=35)
+2026-08-10 08:12:11,429 | INFO | AURC preprocessing: 500/6000 samples (train=448 dev=17 test=35)
+2026-08-10 08:12:11,471 | WARNING | sample=e485953c94eaacc19c759feeedf8aff7 has 11 WordPieces outside the official annotation token stream (indices [19, 20, 22, 23, 24, 25, 26, 27]...); assigning BIO=O
+2026-08-10 08:12:12,345 | WARNING | sample=82932254624fe4995c4319fb3e019e9a has 10 WordPieces outside the official annotation token stream (indices [29, 30, 31, 32, 33, 34, 35, 36]...); assigning BIO=O
+2026-08-10 08:12:13,187 | INFO | AURC preprocessing: 750/6000 samples (train=535 dev=82 test=133)
+2026-08-10 08:12:14,846 | INFO | AURC preprocessing: 1000/6000 samples (train=700 dev=100 test=200)
+2026-08-10 08:12:16,048 | WARNING | sample=be98156eb94fae06f709e8adf9a8bce5 has 10 WordPieces outside the official annotation token stream (indices [27, 28, 29, 30, 31, 33, 34, 35]...); assigning BIO=O
+2026-08-10 08:12:16,472 | INFO | AURC preprocessing: 1250/6000 samples (train=904 dev=112 test=234)
+2026-08-10 08:12:16,562 | WARNING | sample=59cbacbfe71d66f55c26dd9b10491b06 could not locate official token 15='cell'; leaving it unaligned without shifting later tokens
+2026-08-10 08:12:16,562 | WARNING | sample=59cbacbfe71d66f55c26dd9b10491b06 has 1 WordPieces outside the official annotation token stream (indices [18]); assigning BIO=O
+2026-08-10 08:12:17,754 | WARNING | sample=4cf24cbd1c1bce40ce2db1feb511711a has 11 WordPieces outside the official annotation token stream (indices [28, 29, 30, 31, 32, 33, 35, 36]...); assigning BIO=O
+2026-08-10 08:12:18,196 | INFO | AURC preprocessing: 1500/6000 samples (train=1154 dev=112 test=234)
+2026-08-10 08:12:18,941 | WARNING | sample=664a340852d067af0a010e4ad5e56361 has 14 WordPieces outside the official annotation token stream (indices [27, 28, 30, 31, 32, 33, 34, 35]...); assigning BIO=O
+2026-08-10 08:12:19,802 | INFO | AURC preprocessing: 1750/6000 samples (train=1279 dev=180 test=291)
+2026-08-10 08:12:20,220 | WARNING | sample=3abb67003f9796c079256939b0bc9121 could not locate official token 0="O'Conner"; leaving it unaligned without shifting later tokens
+2026-08-10 08:12:20,221 | WARNING | sample=3abb67003f9796c079256939b0bc9121 could not locate official token 25="'"; leaving it unaligned without shifting later tokens
+2026-08-10 08:12:20,221 | WARNING | sample=3abb67003f9796c079256939b0bc9121 has 5 WordPieces outside the official annotation token stream (indices [0, 1, 2, 29, 30]); assigning BIO=O
+2026-08-10 08:12:21,299 | WARNING | sample=16b7f74c491bdb283cdbbed9961b5509 could not locate official token 14='"'; leaving it unaligned without shifting later tokens
+2026-08-10 08:12:21,299 | WARNING | sample=16b7f74c491bdb283cdbbed9961b5509 could not locate official token 17='"'; leaving it unaligned without shifting later tokens
+2026-08-10 08:12:21,305 | WARNING | sample=a8f2d9d5f9e3087a907b713f94e0be22 has 7 WordPieces outside the official annotation token stream (indices [11, 12, 13, 14, 21, 22, 23]); assigning BIO=O
+2026-08-10 08:12:21,307 | INFO | AURC preprocessing: 2000/6000 samples (train=1400 dev=200 test=400)
+2026-08-10 08:12:22,908 | INFO | AURC preprocessing: 2250/6000 samples (train=1617 dev=213 test=420)
+2026-08-10 08:12:23,495 | WARNING | sample=347b0b5b285d84ac902db48b9a53e328 has 38 WordPieces outside the official annotation token stream (indices [13, 14, 15, 16, 17, 18, 19, 20]...); assigning BIO=O
+2026-08-10 08:12:24,757 | INFO | AURC preprocessing: 2500/6000 samples (train=1798 dev=252 test=450)
+2026-08-10 08:12:26,205 | INFO | AURC preprocessing: 2750/6000 samples (train=1991 dev=252 test=507)
+2026-08-10 08:12:27,813 | INFO | AURC preprocessing: 3000/6000 samples (train=2100 dev=300 test=600)
+2026-08-10 08:12:29,306 | INFO | AURC preprocessing: 3250/6000 samples (train=2350 dev=300 test=600)
+2026-08-10 08:12:30,797 | INFO | AURC preprocessing: 3500/6000 samples (train=2478 dev=344 test=678)
+2026-08-10 08:12:30,857 | WARNING | sample=3698ac93d636e458e5445f6d99139164 could not locate official token 7='-'; leaving it unaligned without shifting later tokens
+2026-08-10 08:12:30,857 | WARNING | sample=3698ac93d636e458e5445f6d99139164 has 1 WordPieces outside the official annotation token stream (indices [8]); assigning BIO=O
+2026-08-10 08:12:32,375 | INFO | AURC preprocessing: 3750/6000 samples (train=2649 dev=382 test=719)
+2026-08-10 08:12:33,913 | INFO | AURC preprocessing: 4000/6000 samples (train=2800 dev=400 test=800)
+2026-08-10 08:12:35,326 | WARNING | sample=3a7e2feebace7f17c126759462f1d80f could not locate official token 9="n't"; leaving it unaligned without shifting later tokens
+2026-08-10 08:12:35,328 | WARNING | sample=3a7e2feebace7f17c126759462f1d80f has 1 WordPieces outside the official annotation token stream (indices [9]); assigning BIO=O
+2026-08-10 08:12:35,832 | INFO | AURC preprocessing: 4250/6000 samples (train=3037 dev=413 test=800)
+2026-08-10 08:12:37,569 | INFO | AURC preprocessing: 4500/6000 samples (train=3186 dev=439 test=875)
+2026-08-10 08:12:39,302 | INFO | AURC preprocessing: 4750/6000 samples (train=3328 dev=478 test=944)
+2026-08-10 08:12:40,972 | INFO | AURC preprocessing: 5000/6000 samples (train=3500 dev=500 test=1000)
+2026-08-10 08:12:41,402 | WARNING | sample=1d437bf5adbcdd0718e4b3766d0c38e7 has 1 WordPieces outside the official annotation token stream (indices [7]); assigning BIO=O
+2026-08-10 08:12:42,559 | INFO | AURC preprocessing: 5250/6000 samples (train=3743 dev=507 test=1000)
+2026-08-10 08:12:42,620 | WARNING | sample=07e351c6f47d49bceafbf1f6e588c1cf could not locate official token 9="n't"; leaving it unaligned without shifting later tokens
+2026-08-10 08:12:42,621 | WARNING | sample=07e351c6f47d49bceafbf1f6e588c1cf has 2 WordPieces outside the official annotation token stream (indices [9, 10]); assigning BIO=O
+2026-08-10 08:12:43,057 | WARNING | sample=14f3a33a593f0baee643ba324994484f could not locate official token 35="n't"; leaving it unaligned without shifting later tokens
+2026-08-10 08:12:43,058 | WARNING | sample=14f3a33a593f0baee643ba324994484f has 2 WordPieces outside the official annotation token stream (indices [39, 40]); assigning BIO=O
+2026-08-10 08:12:43,831 | WARNING | sample=845eef2bb28503a6c72265ba998e6c65 has 1 WordPieces outside the official annotation token stream (indices [23]); assigning BIO=O
+2026-08-10 08:12:43,982 | INFO | AURC preprocessing: 5500/6000 samples (train=3885 dev=536 test=1079)
+2026-08-10 08:12:44,336 | WARNING | sample=69aee36d5c0c75838a6f1cb2193ed317 could not locate official token 3='"'; leaving it unaligned without shifting later tokens
+2026-08-10 08:12:44,337 | WARNING | sample=69aee36d5c0c75838a6f1cb2193ed317 could not locate official token 6='"'; leaving it unaligned without shifting later tokens
+2026-08-10 08:12:45,618 | INFO | AURC preprocessing: 5750/6000 samples (train=4021 dev=572 test=1157)
+2026-08-10 08:12:47,356 | INFO | AURC preprocessing: 6000/6000 samples (train=4200 dev=600 test=1200)
+2026-08-10 08:12:47,371 | INFO | train features=4200
+2026-08-10 08:12:47,371 | INFO | dev features=600
+2026-08-10 08:12:47,371 | INFO | test features=1200
+Some weights of BertForTokenClassification were not initialized from the model checkpoint at D:\software\huggingface\bert-large-cased-whole-word-masking and are newly initialized: ['classifier.bias', 'classifier.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+2026-08-10 08:12:50,309 | INFO | Gradient checkpointing enabled for both BERT encoders
+2026-08-10 08:12:51,197 | INFO | CUDA automatic mixed precision=True
+2026-08-10 08:12:51,197 | INFO | Full end-to-end training from epoch 1: Dual-BERT + GCN + Semantic-Syntax Fusion + Initial BIO + batch HetGAT + stance feedback + Final BIO-CRF
+2026-08-10 08:12:51,197 | INFO | Loss = BIOCombined + AU stance + Document stance; BIOCombined = FinalCRF + 0.300*InitialCRF + 0.500*OfficialTokenCE
+2026-08-10 08:12:51,198 | INFO | Final O-emission bias: learnable scalar initialized to 0.250
+2026-08-10 08:12:54,166 | INFO | Optimizer initialized: epochs=30 trainable_parameters=693437626 steps=3960 warmup_steps=396
+2026-08-10 08:12:54,166 | INFO | Epoch 1 | 2026-08-10 08:12:54.166749
+D:\anaconda\envs\aurc\Lib\site-packages\torch\optim\lr_scheduler.py:224: UserWarning: Detected call of `lr_scheduler.step()` before `optimizer.step()`. In PyTorch 1.1.0 and later, you should call them in the opposite order: `optimizer.step()` before `lr_scheduler.step()`.  Failure to do this will result in PyTorch skipping the first value of the learning rate schedule. See more details at https://pytorch.org/docs/stable/optim.html#how-to-adjust-learning-rate
+  warnings.warn(

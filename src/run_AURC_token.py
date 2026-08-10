@@ -32,6 +32,7 @@ from label_utils import (
 )
 from metrics_utils import compute_all_metrics
 from models import TokenBERT
+from prediction_io import write_aurc_prediction_json
 
 
 LOGGER = logging.getLogger("aurc")
@@ -863,6 +864,11 @@ def main() -> None:
                 os.path.join(predictions_dir, "{}_best.jsonl".format(split)),
                 final_records,
             )
+            write_aurc_prediction_json(
+                os.path.join(predictions_dir, "{}_best_aurc.json".format(split)),
+                aurc_data,
+                final_records,
+            )
         with open(
             os.path.join(output_dir, "final_best_metrics.json"),
             "w",
@@ -901,6 +907,13 @@ def main() -> None:
             if split in ("dev", "test"):
                 write_jsonl(
                     os.path.join(predictions_dir, "{}_best.jsonl".format(split)),
+                    final_records,
+                )
+                write_aurc_prediction_json(
+                    os.path.join(
+                        predictions_dir, "{}_best_aurc.json".format(split)
+                    ),
+                    aurc_data,
                     final_records,
                 )
         with open(
