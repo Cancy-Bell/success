@@ -200,6 +200,17 @@ class ModelSmokeTests(unittest.TestCase):
         self.assertEqual(float(first_weights[2:].sum()), 0.0)
         self.assertEqual(tuple(sample["feedback_gate"].shape), (4, 5))
         self.assertTrue(bool(((sample["feedback_gate"] >= 0) & (sample["feedback_gate"] <= 1)).all()))
+        self.assertEqual(tuple(sample["initial_official_probs"].shape), (4, 3))
+        self.assertEqual(tuple(sample["graph_official_probs"].shape), (4, 3))
+        self.assertEqual(tuple(sample["fused_official_probs"].shape), (4, 3))
+        self.assertEqual(tuple(sample["stance_fusion_weights"].shape), (4, 2))
+        self.assertTrue(
+            torch.allclose(
+                sample["stance_fusion_weights"].sum(dim=-1),
+                torch.ones(4),
+                atol=1e-6,
+            )
+        )
 
     def test_eval_uses_initial_predicted_bio_for_graph(self):
         self.model.eval()
@@ -255,10 +266,14 @@ class ModelSmokeTests(unittest.TestCase):
             "document_stance_probs",
             "feedback_gate",
             "final_bio_probs",
+            "graph_official_labels",
+            "fused_official_labels",
+            "stance_fusion_weights",
         ):
             self.assertIn(key, record)
         self.assertEqual(len(record["initial_crf_bio"]), 4)
         self.assertEqual(len(record["final_bio"]), 4)
+        self.assertEqual(record["sentence_length"], 4)
 
 
 if __name__ == "__main__":

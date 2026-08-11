@@ -27,6 +27,7 @@ from label_utils import (
     AU_STANCES,
     BIO_LABELS,
     DOCUMENT_LABELS,
+    OFFICIAL_LABELS,
     bio_to_spans,
     collapse_bio_sequence,
 )
@@ -171,6 +172,7 @@ def build_prediction_record(
     gold_bio_ids = [int(label) for label in gold_bio_ids]
     initial_bio_ids = [int(label) for label in sample_output["initial_bio_ids"]]
     final_bio_ids = [int(label) for label in sample_output["final_bio_ids"]]
+    sentence_length = len(gold_bio_ids)
     gold_units = [
         _span_with_offsets(span, metadata) for span in bio_to_spans(gold_bio_ids)
     ]
@@ -202,10 +204,21 @@ def build_prediction_record(
 
     document_values = sample_output["document_probs"].cpu().tolist()
     predicted_document_stance = DOCUMENT_LABELS[int(np.argmax(document_values))]
+    initial_official_probs = sample_output["initial_official_probs"].cpu().tolist()
+    graph_official_probs = sample_output["graph_official_probs"].cpu().tolist()
+    fused_official_probs = sample_output["fused_official_probs"].cpu().tolist()
+    stance_fusion_weights = sample_output["stance_fusion_weights"].cpu().tolist()
+    graph_official_labels = [
+        OFFICIAL_LABELS[int(np.argmax(values))] for values in graph_official_probs
+    ]
+    fused_official_labels = [
+        OFFICIAL_LABELS[int(np.argmax(values))] for values in fused_official_probs
+    ]
     return {
         "id": metadata["id"],
         "topic": metadata["topic"],
         "text": metadata["text"],
+        "sentence_length": sentence_length,
         "sentence_wordpieces": metadata["sentence_wordpieces"],
         "wordpiece_offsets": metadata["wordpiece_offsets"],
         "gold_bio_ids": gold_bio_ids,
@@ -219,9 +232,15 @@ def build_prediction_record(
         "initial_bio_probs": sample_output["initial_bio_probs"].cpu().tolist(),
         "final_bio_probs": sample_output["final_bio_probs"].cpu().tolist(),
         "feedback_gate": sample_output["feedback_gate"].cpu().tolist(),
+        "initial_official_probs": initial_official_probs,
+        "graph_official_probs": graph_official_probs,
+        "fused_official_probs": fused_official_probs,
+        "stance_fusion_weights": stance_fusion_weights,
         "official_gold_labels": collapse_bio_sequence(gold_bio_ids),
         "official_initial_labels": collapse_bio_sequence(initial_bio_ids),
         "official_pred_labels": collapse_bio_sequence(final_bio_ids),
+        "graph_official_labels": graph_official_labels,
+        "fused_official_labels": fused_official_labels,
         "gold_argument_units": gold_units,
         "initial_argument_units": initial_units,
         "pred_argument_units": final_units,
@@ -295,6 +314,25 @@ def write_jsonl(path: str, records: Sequence[Dict[str, object]]) -> None:
             handle.write(json.dumps(record, ensure_ascii=False) + "\n")
 
 
+def write_sentence_lengths_csv(path: str, records: Sequence[Dict[str, object]]) -> None:
+    os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
+    with open(path, "w", encoding="utf8", newline="") as handle:
+        writer = csv.DictWriter(
+            handle,
+            fieldnames=["id", "topic", "sentence_length", "sentence"],
+        )
+        writer.writeheader()
+        for record in records:
+            writer.writerow(
+                {
+                    "id": record.get("id", ""),
+                    "topic": record.get("topic", ""),
+                    "sentence_length": record.get("sentence_length", 0),
+                    "sentence": record.get("text", ""),
+                }
+            )
+
+
 def save_metrics_history(
     history: Sequence[Dict[str, object]], json_path: str, csv_path: str
 ) -> None:
@@ -309,24 +347,43 @@ def save_metrics_history(
 
 def print_metrics(split: str, metrics: Dict[str, float]) -> None:
     LOGGER.info(
-        "%s: loss=%.4f | Initial/Final 5-class Token F1=%.4f/%.4f "
-        "(delta=%+.4f) | official token/segment/sentence F1=%.4f/%.4f/%.4f "
-        "| AU span F1=%.4f | AU stance Acc/F1=%.4f/%.4f | "
+        "%s: loss=%.4f | Initial/Final 3-class Token F1=%.4f/%.4f "
+        "(delta=%+.4f) | Graph/Fused stance Token F1=%.4f/%.4f "
+        "| official segment/sentence F1=%.4f/%.4f | AU token P/R/F1=%.4f/%.4f/%.4f "
+        "| All stance Acc/F1=%.4f/%.4f | Arg stance Acc/F1=%.4f/%.4f | "
+        "Gold-AU stance Acc/F1=%.4f/%.4f (m=%d) | "
         "Entity F1=%.4f | Document F1=%.4f | O-bias=%.4f",
         split,
         metrics["total_loss"],
-        metrics["initial_bio_token_macro_f1"],
-        metrics["final_bio_token_macro_f1"],
-        metrics["feedback_token_f1_delta"],
-        metrics["official_token_macro_f1"],
+        metrics["initial_official_token_macro_f1"],
+        metrics["final_official_token_macro_f1"],
+        metrics["official_token_f1_delta"],
+        metrics["graph_official_token_macro_f1"],
+        metrics["fused_official_token_macro_f1"],
         metrics["official_segment_f1"],
         metrics["official_sentence_f1"],
-        metrics["au_span_f1"],
-        metrics["au_stance_accuracy"],
-        metrics["au_stance_macro_f1"],
+        metrics["au_token_precision"],
+        metrics["au_token_recall"],
+        metrics["au_token_f1"],
+        metrics["all_stance_token_accuracy"],
+        metrics["all_stance_token_macro_f1"],
+        metrics["argument_stance_token_accuracy"],
+        metrics["argument_stance_token_macro_f1"],
+        metrics["gold_au_stance_accuracy"],
+        metrics["gold_au_stance_macro_f1"],
+        int(metrics["gold_au_stance_count"]),
         metrics["entity_f1"],
         metrics["document_stance_macro_f1"],
         metrics["final_o_bias"],
+    )
+    LOGGER.info(
+        "%s BIO view: Initial/Final 5-class Token F1=%.4f/%.4f "
+        "(delta=%+.4f) | strict AU span F1=%.4f",
+        split,
+        metrics["initial_bio_token_macro_f1"],
+        metrics["final_bio_token_macro_f1"],
+        metrics["feedback_token_f1_delta"],
+        metrics["au_span_f1"],
     )
     LOGGER.info(
         "%s losses: BIOCombined=%.4f FinalCRF=%.4f InitialCRF=%.4f "
@@ -864,6 +921,12 @@ def main() -> None:
                 os.path.join(predictions_dir, "{}_best.jsonl".format(split)),
                 final_records,
             )
+            write_sentence_lengths_csv(
+                os.path.join(
+                    predictions_dir, "{}_sentence_lengths.csv".format(split)
+                ),
+                final_records,
+            )
             write_aurc_prediction_json(
                 os.path.join(predictions_dir, "{}_best_aurc.json".format(split)),
                 aurc_data,
@@ -907,6 +970,12 @@ def main() -> None:
             if split in ("dev", "test"):
                 write_jsonl(
                     os.path.join(predictions_dir, "{}_best.jsonl".format(split)),
+                    final_records,
+                )
+                write_sentence_lengths_csv(
+                    os.path.join(
+                        predictions_dir, "{}_sentence_lengths.csv".format(split)
+                    ),
                     final_records,
                 )
                 write_aurc_prediction_json(

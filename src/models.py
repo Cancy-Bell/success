@@ -332,6 +332,9 @@ class TokenBERT(nn.Module):
         feedback_size = hidden_size + 2 * self.num_labels
         self.feedback_gate = nn.Linear(feedback_size, self.num_labels)
         self.feedback_correction = nn.Linear(feedback_size, self.num_labels)
+        self.stance_fusion_projection = nn.Linear(6, hidden_size)
+        self.stance_fusion_scorer = nn.Linear(hidden_size, 2)
+        self.stance_fusion_to_bio_scale = nn.Parameter(torch.tensor(0.1))
         self.final_o_bias = nn.Parameter(
             torch.tensor(float(initial_o_bias), dtype=torch.float)
         )
@@ -359,6 +362,19 @@ class TokenBERT(nn.Module):
         return F.cross_entropy(emissions[sentence_mask], labels[sentence_mask])
 
     @staticmethod
+    def _official_logits_from_bio_emissions(emissions: torch.Tensor) -> torch.Tensor:
+        """Collapse five BIO logits to official non/con/pro logits."""
+        emissions = emissions.float()
+        return torch.stack(
+            [
+                emissions[..., O],
+                torch.logsumexp(emissions[..., [B_CON, I_CON]], dim=-1),
+                torch.logsumexp(emissions[..., [B_PRO, I_PRO]], dim=-1),
+            ],
+            dim=-1,
+        )
+
+    @staticmethod
     def _official_token_loss(emissions, labels, sentence_mask):
         """CE surrogate for official non/con/pro labels collapsed from BIO.
 
@@ -369,14 +385,7 @@ class TokenBERT(nn.Module):
         emissions = emissions.float()
         if labels is None:
             return emissions.sum() * 0.0
-        official_logits = torch.stack(
-            [
-                emissions[..., 0],
-                torch.logsumexp(emissions[..., [B_CON, I_CON]], dim=-1),
-                torch.logsumexp(emissions[..., [B_PRO, I_PRO]], dim=-1),
-            ],
-            dim=-1,
-        )
+        official_logits = TokenBERT._official_logits_from_bio_emissions(emissions)
         target_map = torch.tensor(
             [0, 2, 2, 1, 1], dtype=torch.long, device=labels.device
         )
@@ -565,6 +574,9 @@ class TokenBERT(nn.Module):
         au_token_correction = token_hidden.new_zeros(
             (batch_size, token_hidden.size(1), self.num_labels)
         )
+        graph_official_logits = document_logits.unsqueeze(1).expand(
+            -1, token_hidden.size(1), -1
+        ).clone()
         for au_index, record in enumerate(au_records):
             sample_index = int(record["sample_index"])
             span = record["span"]
@@ -580,15 +592,49 @@ class TokenBERT(nn.Module):
                 ]
             )
             au_token_correction[sample_index, start:end] = stance_correction
+            # Official order is non/con/pro; AU classifier order is Pro/Con.
+            au_official_logits = torch.stack(
+                [
+                    au_logits[au_index, 0] * 0.0 - 2.0,
+                    au_logits[au_index, 1],
+                    au_logits[au_index, 0],
+                ]
+            )
+            graph_official_logits[sample_index, start:end] = au_official_logits
         document_token_correction = self.document_to_token(document_probs)
         document_token_correction = document_token_correction.unsqueeze(1).expand(
             -1, token_hidden.size(1), -1
         )
+        initial_official_logits = self._official_logits_from_bio_emissions(
+            initial_emissions
+        )
+        stance_fusion_input = torch.cat(
+            [initial_official_logits, graph_official_logits], dim=-1
+        )
+        stance_fusion_scores = self.stance_fusion_scorer(
+            torch.tanh(self.stance_fusion_projection(stance_fusion_input))
+        )
+        stance_fusion_weights = torch.softmax(stance_fusion_scores, dim=-1)
+        fused_official_logits = (
+            stance_fusion_weights[..., 0:1] * initial_official_logits
+            + stance_fusion_weights[..., 1:2] * graph_official_logits
+        )
+        fused_bio_stance_bias = initial_emissions.new_zeros(initial_emissions.shape)
+        fused_bio_stance_bias[..., O] = fused_official_logits[..., 0]
+        fused_bio_stance_bias[..., B_CON] = fused_official_logits[..., 1]
+        fused_bio_stance_bias[..., I_CON] = fused_official_logits[..., 1]
+        fused_bio_stance_bias[..., B_PRO] = fused_official_logits[..., 2]
+        fused_bio_stance_bias[..., I_PRO] = fused_official_logits[..., 2]
         feedback_features = torch.cat(
             [token_hidden, au_token_correction, document_token_correction], dim=-1
         )
         feedback_gates = torch.sigmoid(self.feedback_gate(feedback_features))
         reasoning_correction = self.feedback_correction(feedback_features)
+        # Keep attention-based stance fusion as a diagnostic signal, but do not
+        # inject it into the final BIO emissions.  The best 0.7040 run used the
+        # original token feedback correction plus the calibrated O-emission bias;
+        # adding fused stance logits here made the graph signal over-correct the
+        # final token labels on the test set.
         final_emissions = initial_emissions + feedback_gates * reasoning_correction
         final_emissions = final_emissions.clone()
         final_emissions[..., O] = final_emissions[..., O] + self.final_o_bias
@@ -629,6 +675,18 @@ class TokenBERT(nn.Module):
                     "feedback_gate": feedback_gates[
                         sample_index, :valid_length
                     ].detach(),
+                    "initial_official_probs": torch.softmax(
+                        initial_official_logits[sample_index, :valid_length], dim=-1
+                    ).detach(),
+                    "graph_official_probs": torch.softmax(
+                        graph_official_logits[sample_index, :valid_length], dim=-1
+                    ).detach(),
+                    "fused_official_probs": torch.softmax(
+                        fused_official_logits[sample_index, :valid_length], dim=-1
+                    ).detach(),
+                    "stance_fusion_weights": stance_fusion_weights[
+                        sample_index, :valid_length
+                    ].detach(),
                     "au_spans": [au_records[index]["span"] for index in local_au_indices],
                     "au_stance_probs": au_probs[local_au_indices].detach(),
                     "au_attention_weights": [
@@ -657,6 +715,10 @@ class TokenBERT(nn.Module):
             "document_loss": document_loss,
             "initial_bio_emissions": initial_emissions,
             "final_bio_emissions": final_emissions,
+            "initial_official_logits": initial_official_logits,
+            "graph_official_logits": graph_official_logits,
+            "fused_official_logits": fused_official_logits,
+            "stance_fusion_weights": stance_fusion_weights,
             "final_o_bias": self.final_o_bias,
             "topic_repr": topic_repr,
             "token_hidden": token_hidden,

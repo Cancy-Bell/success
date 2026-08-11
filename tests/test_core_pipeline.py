@@ -68,6 +68,8 @@ class CorePipelineTests(unittest.TestCase):
             "gold_bio_ids": [B_PRO, I_PRO, O, B_CON],
             "initial_bio_ids": [O, O, O, O],
             "pred_bio_ids": [B_PRO, I_PRO, O, B_CON],
+            "graph_official_labels": ["pro", "pro", "non", "pro"],
+            "fused_official_labels": ["pro", "pro", "non", "con"],
             "gold_document_stance": "pro",
             "pred_document_stance": "pro",
             "pred_argument_units": [
@@ -86,6 +88,39 @@ class CorePipelineTests(unittest.TestCase):
         )
         self.assertEqual(result["au_stance_accuracy"], 0.5)
         self.assertEqual(result["au_stance_matched_count"], 2)
+        self.assertAlmostEqual(result["initial_official_token_macro_f1"], 2.0 / 15.0)
+        self.assertEqual(result["final_official_token_macro_f1"], 1.0)
+        self.assertLess(
+            result["graph_official_token_macro_f1"],
+            result["fused_official_token_macro_f1"],
+        )
+        self.assertAlmostEqual(result["all_stance_token_accuracy"], 0.75)
+        self.assertAlmostEqual(result["argument_stance_token_accuracy"], 2.0 / 3.0)
+        self.assertEqual(result["argument_stance_token_count"], 3)
+        self.assertEqual(result["gold_au_stance_count"], 2)
+        self.assertEqual(result["gold_au_stance_accuracy"], 0.5)
+
+    def test_au_identification_is_token_level_not_exact_span(self):
+        record = {
+            "id": "token-au",
+            "gold_bio_ids": [B_PRO, I_PRO, O, O],
+            "initial_bio_ids": [O, O, O, O],
+            "pred_bio_ids": [O, B_PRO, I_PRO, O],
+            "graph_official_labels": ["non", "pro", "pro", "non"],
+            "gold_document_stance": "pro",
+            "pred_document_stance": "pro",
+            "pred_argument_units": [
+                {"start": 1, "end": 3, "final_stance": "Pro"},
+            ],
+        }
+        result = compute_all_metrics([record])
+        self.assertEqual(result["au_span_f1"], 0.0)
+        self.assertGreater(result["au_token_f1"], 0.0)
+        self.assertEqual(result["au_stance_matched_count"], 0)
+        self.assertGreater(result["argument_stance_token_count"], 0)
+        self.assertGreater(result["argument_stance_token_macro_f1"], 0.0)
+        self.assertEqual(result["gold_au_stance_count"], 1)
+        self.assertEqual(result["gold_au_stance_accuracy"], 1.0)
 
 
 if __name__ == "__main__":

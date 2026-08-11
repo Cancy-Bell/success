@@ -139,7 +139,10 @@ def compute_all_metrics(records: Sequence[Dict[str, object]]) -> Dict[str, float
     official_gold_sequences: List[List[str]] = []
     official_pred_sequences: List[List[str]] = []
     flattened_official_gold: List[str] = []
+    flattened_official_initial: List[str] = []
     flattened_official_pred: List[str] = []
+    flattened_official_graph: List[str] = []
+    flattened_official_fused: List[str] = []
     flattened_bio_gold: List[str] = []
     flattened_bio_initial: List[str] = []
     flattened_bio_pred: List[str] = []
@@ -157,6 +160,9 @@ def compute_all_metrics(records: Sequence[Dict[str, object]]) -> Dict[str, float
     stance_gold: List[str] = []
     stance_predicted: List[str] = []
     stance_correct = 0
+    gold_au_stance_gold: List[str] = []
+    gold_au_stance_predicted: List[str] = []
+    gold_au_stance_correct = 0
 
     for record in records:
         gold_bio_ids = [int(label) for label in record["gold_bio_ids"]]
@@ -166,10 +172,16 @@ def compute_all_metrics(records: Sequence[Dict[str, object]]) -> Dict[str, float
         ]
         official_gold = collapse_bio_sequence(gold_bio_ids)
         official_pred = collapse_bio_sequence(pred_bio_ids)
+        official_initial = collapse_bio_sequence(initial_bio_ids)
+        official_graph = list(record.get("graph_official_labels", official_pred))
+        official_fused = list(record.get("fused_official_labels", official_pred))
         official_gold_sequences.append(official_gold)
         official_pred_sequences.append(official_pred)
         flattened_official_gold.extend(official_gold)
+        flattened_official_initial.extend(official_initial)
         flattened_official_pred.extend(official_pred)
+        flattened_official_graph.extend(official_graph)
+        flattened_official_fused.extend(official_fused)
         flattened_bio_gold.extend(BIO_LABELS[label] for label in gold_bio_ids)
         flattened_bio_initial.extend(BIO_LABELS[label] for label in initial_bio_ids)
         flattened_bio_pred.extend(BIO_LABELS[label] for label in pred_bio_ids)
@@ -192,6 +204,25 @@ def compute_all_metrics(records: Sequence[Dict[str, object]]) -> Dict[str, float
             (int(span["start"]), int(span["end"])): str(span["stance"])
             for span in gold_spans
         }
+        for span in gold_spans:
+            start, end = int(span["start"]), int(span["end"])
+            gold_stance = str(span["stance"])
+            token_stances = [
+                str(label).lower()
+                for label in official_graph[start:end]
+                if str(label).lower() in ("pro", "con")
+            ]
+            pro_count = sum(label == "pro" for label in token_stances)
+            con_count = sum(label == "con" for label in token_stances)
+            if pro_count > con_count:
+                predicted_stance = "Pro"
+            elif con_count > pro_count:
+                predicted_stance = "Con"
+            else:
+                predicted_stance = "non"
+            gold_au_stance_gold.append(gold_stance)
+            gold_au_stance_predicted.append(predicted_stance)
+            gold_au_stance_correct += int(gold_stance == predicted_stance)
         predicted_by_span = {
             (int(unit["start"]), int(unit["end"])): str(unit["final_stance"])
             for unit in predicted_units
@@ -236,12 +267,78 @@ def compute_all_metrics(records: Sequence[Dict[str, object]]) -> Dict[str, float
     final_bio_f1 = macro_f1(
         flattened_bio_gold, flattened_bio_pred, labels=BIO_LABELS
     )
+    gold_argument_tokens = [label != "non" for label in flattened_official_gold]
+    initial_argument_tokens = [
+        label != "non" for label in flattened_official_initial
+    ]
+    final_argument_tokens = [label != "non" for label in flattened_official_pred]
+    initial_argument_tp = sum(
+        gold and predicted
+        for gold, predicted in zip(gold_argument_tokens, initial_argument_tokens)
+    )
+    final_argument_tp = sum(
+        gold and predicted
+        for gold, predicted in zip(gold_argument_tokens, final_argument_tokens)
+    )
+    initial_argument_precision, initial_argument_recall, initial_argument_f1 = _prf(
+        initial_argument_tp,
+        sum(initial_argument_tokens),
+        sum(gold_argument_tokens),
+    )
+    final_argument_precision, final_argument_recall, final_argument_f1 = _prf(
+        final_argument_tp,
+        sum(final_argument_tokens),
+        sum(gold_argument_tokens),
+    )
+    initial_official_f1 = macro_f1(
+        flattened_official_gold,
+        flattened_official_initial,
+        labels=OFFICIAL_LABELS,
+    )
+    final_official_f1 = macro_f1(
+        flattened_official_gold,
+        flattened_official_pred,
+        labels=OFFICIAL_LABELS,
+    )
+    all_stance_correct = sum(
+        gold == predicted
+        for gold, predicted in zip(flattened_official_gold, flattened_official_graph)
+    )
+    all_stance_accuracy = _safe_divide(
+        all_stance_correct, len(flattened_official_gold)
+    )
+    argument_stance_pairs = [
+        (gold, predicted)
+        for gold, predicted in zip(flattened_official_gold, flattened_official_graph)
+        if gold != "non" or predicted != "non"
+    ]
+    if argument_stance_pairs:
+        argument_stance_gold = [gold for gold, _ in argument_stance_pairs]
+        argument_stance_predicted = [
+            predicted for _, predicted in argument_stance_pairs
+        ]
+    else:
+        argument_stance_gold = []
+        argument_stance_predicted = []
+    argument_stance_correct = sum(
+        gold == predicted
+        for gold, predicted in zip(argument_stance_gold, argument_stance_predicted)
+    )
     return {
-        "official_token_macro_f1": macro_f1(
+        "official_token_macro_f1": final_official_f1,
+        "initial_official_token_macro_f1": initial_official_f1,
+        "final_official_token_macro_f1": final_official_f1,
+        "graph_official_token_macro_f1": macro_f1(
             flattened_official_gold,
-            flattened_official_pred,
+            flattened_official_graph,
             labels=OFFICIAL_LABELS,
         ),
+        "fused_official_token_macro_f1": macro_f1(
+            flattened_official_gold,
+            flattened_official_fused,
+            labels=OFFICIAL_LABELS,
+        ),
+        "official_token_f1_delta": final_official_f1 - initial_official_f1,
         "official_segment_f1": official_segment_f1(
             official_gold_sequences, official_pred_sequences
         ),
@@ -250,9 +347,42 @@ def compute_all_metrics(records: Sequence[Dict[str, object]]) -> Dict[str, float
             official_sentence_pred,
             labels=OFFICIAL_LABELS,
         ),
+        "all_stance_token_macro_f1": macro_f1(
+            flattened_official_gold,
+            flattened_official_graph,
+            labels=OFFICIAL_LABELS,
+        ),
+        "all_stance_token_accuracy": all_stance_accuracy,
+        "argument_stance_token_macro_f1": macro_f1(
+            argument_stance_gold,
+            argument_stance_predicted,
+            labels=OFFICIAL_LABELS,
+        ),
+        "argument_stance_token_accuracy": _safe_divide(
+            argument_stance_correct, len(argument_stance_gold)
+        ),
+        "argument_stance_token_count": len(argument_stance_gold),
+        "gold_au_stance_macro_f1": macro_f1(
+            gold_au_stance_gold,
+            gold_au_stance_predicted,
+            labels=AU_STANCES,
+        ),
+        "gold_au_stance_accuracy": _safe_divide(
+            gold_au_stance_correct, len(gold_au_stance_gold)
+        ),
+        "gold_au_stance_count": len(gold_au_stance_gold),
         "au_span_precision": span_precision,
         "au_span_recall": span_recall,
         "au_span_f1": span_f1,
+        "initial_au_token_precision": initial_argument_precision,
+        "initial_au_token_recall": initial_argument_recall,
+        "initial_au_token_f1": initial_argument_f1,
+        "final_au_token_precision": final_argument_precision,
+        "final_au_token_recall": final_argument_recall,
+        "final_au_token_f1": final_argument_f1,
+        "au_token_precision": final_argument_precision,
+        "au_token_recall": final_argument_recall,
+        "au_token_f1": final_argument_f1,
         "au_stance_macro_f1": macro_f1(
             stance_gold, stance_predicted, labels=AU_STANCES
         ),
