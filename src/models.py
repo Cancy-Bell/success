@@ -393,6 +393,52 @@ class TokenBERT(nn.Module):
         mask = sentence_mask.bool()
         return F.cross_entropy(official_logits[mask], official_targets[mask])
 
+    @staticmethod
+    def _official_logits_loss(official_logits, labels, sentence_mask):
+        """CE loss for explicit official non/con/pro logits.
+
+        ``official_logits`` uses official order: non/con/pro.
+        """
+        official_logits = official_logits.float()
+        if labels is None:
+            return official_logits.sum() * 0.0
+        target_map = torch.tensor(
+            [0, 2, 2, 1, 1], dtype=torch.long, device=labels.device
+        )
+        official_targets = target_map[labels]
+        mask = sentence_mask.bool()
+        return F.cross_entropy(official_logits[mask], official_targets[mask])
+
+    @staticmethod
+    def _apply_stance_only_fusion_to_paths(
+        initial_paths: Sequence[Sequence[int]],
+        fused_official_logits: torch.Tensor,
+        sentence_mask: torch.Tensor,
+    ) -> List[List[int]]:
+        """Freeze Initial CRF boundaries and update only Pro/Con polarity.
+
+        O tokens remain O.  B tokens remain B, I tokens remain I.  For argument
+        tokens, fused official logits choose only between con/pro; the non logit
+        is ignored so graph stance cannot erase or create AU boundaries.
+        """
+        fused_stance_ids = fused_official_logits[..., [1, 2]].argmax(dim=-1)
+        final_paths: List[List[int]] = []
+        for sample_index, path in enumerate(initial_paths):
+            valid_length = int(sentence_mask[sample_index].long().sum().item())
+            repaired_path = repair_bio_sequence([int(label) for label in path])
+            sample_final: List[int] = []
+            for token_index, initial_label in enumerate(repaired_path[:valid_length]):
+                if initial_label == O:
+                    sample_final.append(O)
+                    continue
+                predicts_con = int(fused_stance_ids[sample_index, token_index].item()) == 0
+                if initial_label in (B_PRO, B_CON):
+                    sample_final.append(B_CON if predicts_con else B_PRO)
+                else:
+                    sample_final.append(I_CON if predicts_con else I_PRO)
+            final_paths.append(repair_bio_sequence(sample_final))
+        return final_paths
+
     def forward(
         self,
         input_ids: torch.Tensor,
@@ -644,15 +690,19 @@ class TokenBERT(nn.Module):
         initial_bio_loss = self._crf_loss(
             initial_emissions, labels, sentence_mask.bool()
         )
-        official_token_loss = self._official_token_loss(
-            final_emissions, labels, sentence_mask.bool()
+        official_token_loss = self._official_logits_loss(
+            fused_official_logits, labels, sentence_mask.bool()
         )
         bio_loss = (
             final_bio_loss
             + self.initial_crf_loss_weight * initial_bio_loss
             + self.official_token_loss_weight * official_token_loss
         )
-        final_paths = self._decode(final_emissions, sentence_mask.bool())
+        final_paths = self._apply_stance_only_fusion_to_paths(
+            initial_paths=initial_paths,
+            fused_official_logits=fused_official_logits,
+            sentence_mask=sentence_mask,
+        )
         final_probs = torch.softmax(final_emissions, dim=-1)
         total_loss = bio_loss + au_loss + document_loss
 

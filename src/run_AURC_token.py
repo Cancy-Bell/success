@@ -575,6 +575,15 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--no_save_predictions", action="store_false", dest="save_predictions"
     )
+    parser.add_argument(
+        "--save_detailed_predictions",
+        action="store_true",
+        help=(
+            "Also save rich JSONL diagnostic predictions with probabilities, "
+            "attention weights and intermediate fields. By default only compact "
+            "official-style AURC JSON files are saved."
+        ),
+    )
 
     # End-to-end graph parameters, centralized here.
     parser.add_argument("--spacy_model", default="en_core_web_sm")
@@ -844,7 +853,7 @@ def main() -> None:
                         }
                     )
                 metrics_history.append(history_row)
-                if args.save_predictions:
+                if args.save_predictions and args.save_detailed_predictions:
                     write_jsonl(
                         os.path.join(
                             predictions_dir,
@@ -917,10 +926,6 @@ def main() -> None:
             )
             final_best_metrics[split] = final_metrics
             print_metrics("{}_BEST".format(split.upper()), final_metrics)
-            write_jsonl(
-                os.path.join(predictions_dir, "{}_best.jsonl".format(split)),
-                final_records,
-            )
             write_sentence_lengths_csv(
                 os.path.join(
                     predictions_dir, "{}_sentence_lengths.csv".format(split)
@@ -928,10 +933,22 @@ def main() -> None:
                 final_records,
             )
             write_aurc_prediction_json(
+                os.path.join(predictions_dir, "{}_best.json".format(split)),
+                aurc_data,
+                final_records,
+            )
+            write_aurc_prediction_json(
                 os.path.join(predictions_dir, "{}_best_aurc.json".format(split)),
                 aurc_data,
                 final_records,
             )
+            if args.save_detailed_predictions:
+                write_jsonl(
+                    os.path.join(
+                        predictions_dir, "{}_best_detailed.jsonl".format(split)
+                    ),
+                    final_records,
+                )
         with open(
             os.path.join(output_dir, "final_best_metrics.json"),
             "w",
@@ -968,14 +985,17 @@ def main() -> None:
             final_best_metrics[split] = final_metrics
             print_metrics("{}_BEST".format(split.upper()), final_metrics)
             if split in ("dev", "test"):
-                write_jsonl(
-                    os.path.join(predictions_dir, "{}_best.jsonl".format(split)),
-                    final_records,
-                )
                 write_sentence_lengths_csv(
                     os.path.join(
                         predictions_dir, "{}_sentence_lengths.csv".format(split)
                     ),
+                    final_records,
+                )
+                write_aurc_prediction_json(
+                    os.path.join(
+                        predictions_dir, "{}_best.json".format(split)
+                    ),
+                    aurc_data,
                     final_records,
                 )
                 write_aurc_prediction_json(
@@ -985,6 +1005,13 @@ def main() -> None:
                     aurc_data,
                     final_records,
                 )
+                if args.save_detailed_predictions:
+                    write_jsonl(
+                        os.path.join(
+                            predictions_dir, "{}_best_detailed.jsonl".format(split)
+                        ),
+                        final_records,
+                    )
         with open(
             os.path.join(output_dir, "final_best_metrics.json"),
             "w",
