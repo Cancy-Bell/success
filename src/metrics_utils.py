@@ -55,6 +55,18 @@ def macro_f1(
     return sum(scores) / len(scores) if scores else 0.0
 
 
+def _majority_argument_stance(token_labels: Sequence[str]) -> str:
+    """Return Pro/Con majority inside one gold AU, or non on a tie."""
+    normalized = [str(label).lower() for label in token_labels]
+    pro_count = sum(label == "pro" for label in normalized)
+    con_count = sum(label == "con" for label in normalized)
+    if pro_count > con_count:
+        return "Pro"
+    if con_count > pro_count:
+        return "Con"
+    return "non"
+
+
 def _extract_official_segments(labels: Sequence[str]) -> List[Tuple[int, int, str]]:
     segments: List[Tuple[int, int, str]] = []
     start: Optional[int] = None
@@ -163,6 +175,9 @@ def compute_all_metrics(records: Sequence[Dict[str, object]]) -> Dict[str, float
     gold_au_stance_gold: List[str] = []
     gold_au_stance_predicted: List[str] = []
     gold_au_stance_correct = 0
+    initial_gold_au_stance_gold: List[str] = []
+    initial_gold_au_stance_predicted: List[str] = []
+    initial_gold_au_stance_correct = 0
 
     for record in records:
         gold_bio_ids = [int(label) for label in record["gold_bio_ids"]]
@@ -207,19 +222,15 @@ def compute_all_metrics(records: Sequence[Dict[str, object]]) -> Dict[str, float
         for span in gold_spans:
             start, end = int(span["start"]), int(span["end"])
             gold_stance = str(span["stance"])
-            token_stances = [
-                str(label).lower()
-                for label in official_graph[start:end]
-                if str(label).lower() in ("pro", "con")
-            ]
-            pro_count = sum(label == "pro" for label in token_stances)
-            con_count = sum(label == "con" for label in token_stances)
-            if pro_count > con_count:
-                predicted_stance = "Pro"
-            elif con_count > pro_count:
-                predicted_stance = "Con"
-            else:
-                predicted_stance = "non"
+            initial_predicted_stance = _majority_argument_stance(
+                official_initial[start:end]
+            )
+            predicted_stance = _majority_argument_stance(official_graph[start:end])
+            initial_gold_au_stance_gold.append(gold_stance)
+            initial_gold_au_stance_predicted.append(initial_predicted_stance)
+            initial_gold_au_stance_correct += int(
+                gold_stance == initial_predicted_stance
+            )
             gold_au_stance_gold.append(gold_stance)
             gold_au_stance_predicted.append(predicted_stance)
             gold_au_stance_correct += int(gold_stance == predicted_stance)
@@ -371,6 +382,15 @@ def compute_all_metrics(records: Sequence[Dict[str, object]]) -> Dict[str, float
             gold_au_stance_correct, len(gold_au_stance_gold)
         ),
         "gold_au_stance_count": len(gold_au_stance_gold),
+        "initial_gold_au_stance_macro_f1": macro_f1(
+            initial_gold_au_stance_gold,
+            initial_gold_au_stance_predicted,
+            labels=AU_STANCES,
+        ),
+        "initial_gold_au_stance_accuracy": _safe_divide(
+            initial_gold_au_stance_correct, len(initial_gold_au_stance_gold)
+        ),
+        "initial_gold_au_stance_count": len(initial_gold_au_stance_gold),
         "au_span_precision": span_precision,
         "au_span_recall": span_recall,
         "au_span_f1": span_f1,

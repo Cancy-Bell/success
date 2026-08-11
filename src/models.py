@@ -12,18 +12,16 @@ from transformers import BertConfig, BertForTokenClassification, BertModel
 from graph_utils import HeterogeneousGAT, build_batch_heterogeneous_edges
 from label_utils import (
     AU_STANCE_TO_ID,
-    B_CON,
-    B_PRO,
+    CON,
     O,
-    I_CON,
-    I_PRO,
+    PRO,
     bio_to_spans,
     repair_bio_sequence,
 )
 
 
 class LinearChainCRF(nn.Module):
-    """Batch-first linear-chain CRF with BIO transition constraints."""
+    """Batch-first linear-chain CRF for non/con/pro token labels."""
 
     def __init__(self, num_tags: int):
         super().__init__()
@@ -33,15 +31,6 @@ class LinearChainCRF(nn.Module):
         self.transitions = nn.Parameter(torch.empty(num_tags, num_tags))
         transition_constraint = torch.zeros(num_tags, num_tags)
         start_constraint = torch.zeros(num_tags)
-        if num_tags == 5:
-            # transitions[previous_tag, next_tag]
-            for previous in range(num_tags):
-                if previous not in (B_PRO, I_PRO):
-                    transition_constraint[previous, I_PRO] = -10000.0
-                if previous not in (B_CON, I_CON):
-                    transition_constraint[previous, I_CON] = -10000.0
-            start_constraint[I_PRO] = -10000.0
-            start_constraint[I_CON] = -10000.0
         self.register_buffer("transition_constraint", transition_constraint)
         self.register_buffer("start_constraint", start_constraint)
         self.reset_parameters()
@@ -243,7 +232,7 @@ class TopicAttentionPooling(nn.Module):
 
 
 class TokenBERT(nn.Module):
-    """Dual-BERT, batch-HetGAT and stance-guided final BIO-CRF model."""
+    """Dual-BERT, batch-HetGAT and stance-guided three-class CRF model."""
 
     def __init__(
         self,
@@ -264,27 +253,20 @@ class TokenBERT(nn.Module):
         au_top_k: int = 3,
         au_syntax_hops: int = 1,
         num_document_labels: int = 3,
-        initial_crf_loss_weight: float = 0.3,
-        official_token_loss_weight: float = 0.5,
         initial_o_bias: float = 0.0,
         local_files_only: bool = False,
     ):
         super().__init__()
-        if int(num_labels) != 5:
-            raise ValueError("the end-to-end AURC model requires exactly 5 BIO labels")
+        if int(num_labels) != 3:
+            raise ValueError(
+                "the end-to-end AURC model requires exactly 3 token labels"
+            )
         self.num_labels = int(num_labels)
         self.batch_first = bool(batch_first)
         self.use_crf = bool(use_crf)
         self.au_semantic_threshold = float(au_semantic_threshold)
         self.au_top_k = int(au_top_k)
         self.au_syntax_hops = int(au_syntax_hops)
-        self.initial_crf_loss_weight = float(initial_crf_loss_weight)
-        self.official_token_loss_weight = float(official_token_loss_weight)
-        if self.initial_crf_loss_weight < 0.0:
-            raise ValueError("initial_crf_loss_weight must be >= 0")
-        if self.official_token_loss_weight < 0.0:
-            raise ValueError("official_token_loss_weight must be >= 0")
-
         if config is None:
             config = BertConfig.from_pretrained(
                 model_name,
@@ -363,65 +345,38 @@ class TokenBERT(nn.Module):
 
     @staticmethod
     def _official_logits_from_bio_emissions(emissions: torch.Tensor) -> torch.Tensor:
-        """Collapse five BIO logits to official non/con/pro logits."""
-        emissions = emissions.float()
-        return torch.stack(
-            [
-                emissions[..., O],
-                torch.logsumexp(emissions[..., [B_CON, I_CON]], dim=-1),
-                torch.logsumexp(emissions[..., [B_PRO, I_PRO]], dim=-1),
-            ],
-            dim=-1,
-        )
+        """Return three-class token logits in official non/con/pro order."""
+        return emissions.float()
 
     @staticmethod
     def _official_token_loss(emissions, labels, sentence_mask):
-        """CE surrogate for official non/con/pro labels collapsed from BIO.
-
-        The grouped logits preserve both B/I alternatives with log-sum-exp:
-        non=O, con={B-Con,I-Con}, pro={B-Pro,I-Pro}.  This order matches the
-        official AURC label order used by the metric implementation.
-        """
+        """Cross entropy for three-class non/con/pro token labels."""
         emissions = emissions.float()
         if labels is None:
             return emissions.sum() * 0.0
-        official_logits = TokenBERT._official_logits_from_bio_emissions(emissions)
-        target_map = torch.tensor(
-            [0, 2, 2, 1, 1], dtype=torch.long, device=labels.device
-        )
-        official_targets = target_map[labels]
         mask = sentence_mask.bool()
-        return F.cross_entropy(official_logits[mask], official_targets[mask])
+        return F.cross_entropy(emissions[mask], labels[mask])
 
     @staticmethod
-    def _official_logits_loss(official_logits, labels, sentence_mask):
-        """CE loss for explicit official non/con/pro logits.
-
-        ``official_logits`` uses official order: non/con/pro.
-        """
-        official_logits = official_logits.float()
+    def _official_probability_loss(official_probabilities, labels, sentence_mask):
+        """NLL for normalized probabilities in official non/con/pro order."""
+        official_probabilities = official_probabilities.float()
         if labels is None:
-            return official_logits.sum() * 0.0
-        target_map = torch.tensor(
-            [0, 2, 2, 1, 1], dtype=torch.long, device=labels.device
-        )
-        official_targets = target_map[labels]
+            return official_probabilities.sum() * 0.0
         mask = sentence_mask.bool()
-        return F.cross_entropy(official_logits[mask], official_targets[mask])
+        log_probabilities = torch.log(official_probabilities.clamp_min(1e-8))
+        return F.nll_loss(log_probabilities[mask], labels[mask])
 
     @staticmethod
     def _apply_stance_only_fusion_to_paths(
         initial_paths: Sequence[Sequence[int]],
-        fused_official_logits: torch.Tensor,
+        fused_official_probabilities: torch.Tensor,
         sentence_mask: torch.Tensor,
     ) -> List[List[int]]:
-        """Freeze Initial CRF boundaries and update only Pro/Con polarity.
-
-        O tokens remain O.  B tokens remain B, I tokens remain I.  For argument
-        tokens, fused official logits choose only between con/pro; the non logit
-        is ignored so graph stance cannot erase or create AU boundaries.
-        """
-        fused_stance_ids = fused_official_logits[..., [1, 2]].argmax(dim=-1)
+        """Freeze Initial CRF argument/non boundary and update only polarity."""
+        fused_stance_ids = fused_official_probabilities[..., [CON, PRO]].argmax(
+            dim=-1
+        )
         final_paths: List[List[int]] = []
         for sample_index, path in enumerate(initial_paths):
             valid_length = int(sentence_mask[sample_index].long().sum().item())
@@ -432,10 +387,7 @@ class TokenBERT(nn.Module):
                     sample_final.append(O)
                     continue
                 predicts_con = int(fused_stance_ids[sample_index, token_index].item()) == 0
-                if initial_label in (B_PRO, B_CON):
-                    sample_final.append(B_CON if predicts_con else B_PRO)
-                else:
-                    sample_final.append(I_CON if predicts_con else I_PRO)
+                sample_final.append(CON if predicts_con else PRO)
             final_paths.append(repair_bio_sequence(sample_final))
         return final_paths
 
@@ -620,7 +572,10 @@ class TokenBERT(nn.Module):
         au_token_correction = token_hidden.new_zeros(
             (batch_size, token_hidden.size(1), self.num_labels)
         )
-        graph_official_logits = document_logits.unsqueeze(1).expand(
+        # Graph stance is represented directly as normalized probabilities.
+        # Document nodes already provide a three-class distribution. AU nodes
+        # provide only Con/Pro, so their token distribution is [0, P(Con), P(Pro)].
+        graph_official_probabilities = document_probs.unsqueeze(1).expand(
             -1, token_hidden.size(1), -1
         ).clone()
         for au_index, record in enumerate(au_records):
@@ -631,22 +586,22 @@ class TokenBERT(nn.Module):
             stance_correction = torch.stack(
                 [
                     pro_probability * 0.0,
-                    pro_probability,
-                    pro_probability,
                     con_probability,
-                    con_probability,
+                    pro_probability,
                 ]
             )
             au_token_correction[sample_index, start:end] = stance_correction
             # Official order is non/con/pro; AU classifier order is Pro/Con.
-            au_official_logits = torch.stack(
+            au_official_probabilities = torch.stack(
                 [
-                    au_logits[au_index, 0] * 0.0 - 2.0,
-                    au_logits[au_index, 1],
-                    au_logits[au_index, 0],
+                    pro_probability * 0.0,
+                    con_probability,
+                    pro_probability,
                 ]
             )
-            graph_official_logits[sample_index, start:end] = au_official_logits
+            graph_official_probabilities[
+                sample_index, start:end
+            ] = au_official_probabilities
         document_token_correction = self.document_to_token(document_probs)
         document_token_correction = document_token_correction.unsqueeze(1).expand(
             -1, token_hidden.size(1), -1
@@ -654,23 +609,20 @@ class TokenBERT(nn.Module):
         initial_official_logits = self._official_logits_from_bio_emissions(
             initial_emissions
         )
+        initial_official_probabilities = torch.softmax(
+            initial_official_logits, dim=-1
+        )
         stance_fusion_input = torch.cat(
-            [initial_official_logits, graph_official_logits], dim=-1
+            [initial_official_probabilities, graph_official_probabilities], dim=-1
         )
         stance_fusion_scores = self.stance_fusion_scorer(
             torch.tanh(self.stance_fusion_projection(stance_fusion_input))
         )
         stance_fusion_weights = torch.softmax(stance_fusion_scores, dim=-1)
-        fused_official_logits = (
-            stance_fusion_weights[..., 0:1] * initial_official_logits
-            + stance_fusion_weights[..., 1:2] * graph_official_logits
+        fused_official_probabilities = (
+            stance_fusion_weights[..., 0:1] * initial_official_probabilities
+            + stance_fusion_weights[..., 1:2] * graph_official_probabilities
         )
-        fused_bio_stance_bias = initial_emissions.new_zeros(initial_emissions.shape)
-        fused_bio_stance_bias[..., O] = fused_official_logits[..., 0]
-        fused_bio_stance_bias[..., B_CON] = fused_official_logits[..., 1]
-        fused_bio_stance_bias[..., I_CON] = fused_official_logits[..., 1]
-        fused_bio_stance_bias[..., B_PRO] = fused_official_logits[..., 2]
-        fused_bio_stance_bias[..., I_PRO] = fused_official_logits[..., 2]
         feedback_features = torch.cat(
             [token_hidden, au_token_correction, document_token_correction], dim=-1
         )
@@ -690,17 +642,14 @@ class TokenBERT(nn.Module):
         initial_bio_loss = self._crf_loss(
             initial_emissions, labels, sentence_mask.bool()
         )
-        official_token_loss = self._official_logits_loss(
-            fused_official_logits, labels, sentence_mask.bool()
+        official_token_loss = self._official_probability_loss(
+            fused_official_probabilities, labels, sentence_mask.bool()
         )
-        bio_loss = (
-            final_bio_loss
-            + self.initial_crf_loss_weight * initial_bio_loss
-            + self.official_token_loss_weight * official_token_loss
-        )
+        # All token objectives have equal coefficient 1.0.
+        bio_loss = final_bio_loss + initial_bio_loss + official_token_loss
         final_paths = self._apply_stance_only_fusion_to_paths(
             initial_paths=initial_paths,
-            fused_official_logits=fused_official_logits,
+            fused_official_probabilities=fused_official_probabilities,
             sentence_mask=sentence_mask,
         )
         final_probs = torch.softmax(final_emissions, dim=-1)
@@ -725,15 +674,15 @@ class TokenBERT(nn.Module):
                     "feedback_gate": feedback_gates[
                         sample_index, :valid_length
                     ].detach(),
-                    "initial_official_probs": torch.softmax(
-                        initial_official_logits[sample_index, :valid_length], dim=-1
-                    ).detach(),
-                    "graph_official_probs": torch.softmax(
-                        graph_official_logits[sample_index, :valid_length], dim=-1
-                    ).detach(),
-                    "fused_official_probs": torch.softmax(
-                        fused_official_logits[sample_index, :valid_length], dim=-1
-                    ).detach(),
+                    "initial_official_probs": initial_official_probabilities[
+                        sample_index, :valid_length
+                    ].detach(),
+                    "graph_official_probs": graph_official_probabilities[
+                        sample_index, :valid_length
+                    ].detach(),
+                    "fused_official_probs": fused_official_probabilities[
+                        sample_index, :valid_length
+                    ].detach(),
                     "stance_fusion_weights": stance_fusion_weights[
                         sample_index, :valid_length
                     ].detach(),
@@ -766,8 +715,9 @@ class TokenBERT(nn.Module):
             "initial_bio_emissions": initial_emissions,
             "final_bio_emissions": final_emissions,
             "initial_official_logits": initial_official_logits,
-            "graph_official_logits": graph_official_logits,
-            "fused_official_logits": fused_official_logits,
+            "initial_official_probabilities": initial_official_probabilities,
+            "graph_official_probabilities": graph_official_probabilities,
+            "fused_official_probabilities": fused_official_probabilities,
             "stance_fusion_weights": stance_fusion_weights,
             "final_o_bias": self.final_o_bias,
             "topic_repr": topic_repr,

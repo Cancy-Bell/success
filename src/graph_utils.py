@@ -245,12 +245,6 @@ class RelationAwareGATLayer(nn.Module):
                 for relation in self.relation_types
             }
         )
-        self.relation_scale = nn.ParameterDict(
-            {
-                relation: nn.Parameter(torch.ones(num_heads))
-                for relation in self.relation_types
-            }
-        )
         self.output_projection = nn.Linear(hidden_size, hidden_size)
         self.dropout = nn.Dropout(dropout)
         self.layer_norm = nn.LayerNorm(hidden_size)
@@ -299,9 +293,6 @@ class RelationAwareGATLayer(nn.Module):
                 attention[target_mask] = torch.softmax(logits[target_mask], dim=0)
             attention = self.dropout(attention)
             messages = source_states * attention.unsqueeze(-1)
-            messages = messages * self.relation_scale[relation].view(
-                1, self.num_heads, 1
-            )
             aggregate.index_add_(0, targets, messages)
 
         output = aggregate.reshape(node_count, self.hidden_size)

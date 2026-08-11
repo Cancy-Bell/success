@@ -1,16 +1,17 @@
 #!/usr/bin/env python
-"""Shared AURC BIO labels, stance maps, and robust span recovery."""
+"""Shared three-class AURC token labels, stance maps, and span recovery."""
 
 from typing import Dict, Iterable, List, Optional, Sequence, Tuple
 
 
-O = 0
-B_PRO = 1
-I_PRO = 2
-B_CON = 3
-I_CON = 4
+NON = 0
+CON = 1
+PRO = 2
 
-BIO_LABELS = ["O", "B-Pro", "I-Pro", "B-Con", "I-Con"]
+# Keep the historical names as compatibility aliases for prediction files and
+# analysis utilities.  The model itself is now three-class throughout.
+O = NON
+BIO_LABELS = ["non", "con", "pro"]
 BIO_LABEL_TO_ID = {label: index for index, label in enumerate(BIO_LABELS)}
 
 AU_STANCES = ["Pro", "Con"]
@@ -24,17 +25,19 @@ DOCUMENT_LABEL_TO_ID = {label: index for index, label in enumerate(DOCUMENT_LABE
 
 
 def bio_id_to_stance(label_id: int) -> Optional[str]:
-    if int(label_id) in (B_PRO, I_PRO):
+    if int(label_id) == PRO:
         return "Pro"
-    if int(label_id) in (B_CON, I_CON):
+    if int(label_id) == CON:
         return "Con"
     return None
 
 
 def collapse_bio_id(label_id: int) -> str:
-    """Collapse five-class BIO to the official three AURC labels."""
-    stance = bio_id_to_stance(int(label_id))
-    return "non" if stance is None else stance.lower()
+    """Return the official non/con/pro label for a three-class token id."""
+    label_id = int(label_id)
+    if not 0 <= label_id < len(OFFICIAL_LABELS):
+        raise ValueError("unknown three-class token label id: {}".format(label_id))
+    return OFFICIAL_LABELS[label_id]
 
 
 def collapse_bio_sequence(label_ids: Sequence[int]) -> List[str]:
@@ -42,30 +45,23 @@ def collapse_bio_sequence(label_ids: Sequence[int]) -> List[str]:
 
 
 def repair_bio_sequence(label_ids: Sequence[int]) -> List[int]:
-    """Repair illegal I-tags by deterministically treating them as B-tags.
+    """Validate and return a three-class non/con/pro token sequence.
 
-    The CRF is transition-constrained, but this fixed repair policy also makes
-    externally supplied paths and legacy checkpoints safe.
+    The legacy function name is retained so existing callers and JSON tooling
+    continue to work after removal of B/I labels.
     """
-    repaired: List[int] = []
-    previous_stance: Optional[str] = None
-    for raw_label in label_ids:
-        label = int(raw_label)
-        stance = bio_id_to_stance(label)
-        if label == I_PRO and previous_stance != "Pro":
-            label = B_PRO
-        elif label == I_CON and previous_stance != "Con":
-            label = B_CON
-        repaired.append(label)
-        previous_stance = bio_id_to_stance(label)
+    repaired = [int(label) for label in label_ids]
+    invalid = [label for label in repaired if label not in (NON, CON, PRO)]
+    if invalid:
+        raise ValueError("invalid three-class token labels: {}".format(invalid[:5]))
     return repaired
 
 
 def bio_to_spans(label_ids: Sequence[int]) -> List[Dict[str, object]]:
-    """Recover half-open WordPiece AU spans from a BIO path.
+    """Recover AU spans as contiguous runs of equal non-neutral stance.
 
-    Each result has ``start``, ``end`` (exclusive), and ``stance``. Invalid
-    I-tags are first repaired with :func:`repair_bio_sequence`.
+    Without B/I labels, adjacent AUs with the same stance are necessarily one
+    run. Each result has ``start``, ``end`` (exclusive), and ``stance``.
     """
     labels = repair_bio_sequence(label_ids)
     spans: List[Dict[str, object]] = []
@@ -81,11 +77,10 @@ def bio_to_spans(label_ids: Sequence[int]) -> List[Dict[str, object]]:
 
     for index, label in enumerate(labels):
         stance = bio_id_to_stance(label)
-        is_begin = label in (B_PRO, B_CON)
         if stance is None:
             close(index)
             continue
-        if is_begin or current_stance != stance:
+        if current_stance != stance:
             close(index)
             current_start = index
             current_stance = stance
@@ -97,32 +92,13 @@ def official_labels_to_bio(
     official_labels: Sequence[str],
     wordpiece_to_original_token: Sequence[int],
 ) -> List[int]:
-    """Propagate official token labels to WordPieces as five-class BIO.
-
-    For a B-labeled original token split into multiple WordPieces, only the
-    first WordPiece receives B and all remaining pieces receive I.
-    """
-    seen_original_tokens = set()
+    """Propagate official non/con/pro token labels directly to WordPieces."""
     bio_labels: List[int] = []
     for original_index in wordpiece_to_original_token:
         if original_index < 0 or original_index >= len(official_labels):
             bio_labels.append(O)
             continue
         label = str(official_labels[original_index]).lower()
-        if label not in ("pro", "con"):
-            bio_labels.append(O)
-            seen_original_tokens.add(original_index)
-            continue
-
-        first_piece = original_index not in seen_original_tokens
-        segment_start = (
-            original_index == 0
-            or str(official_labels[original_index - 1]).lower() != label
-        )
-        if label == "pro":
-            bio_labels.append(B_PRO if first_piece and segment_start else I_PRO)
-        else:
-            bio_labels.append(B_CON if first_piece and segment_start else I_CON)
-        seen_original_tokens.add(original_index)
+        bio_labels.append(OFFICIAL_LABEL_TO_ID.get(label, NON))
     return bio_labels
 

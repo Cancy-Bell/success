@@ -198,8 +198,13 @@ def main() -> int:
             "gcn_dropout": 0.2,
             "hetgat_dropout": 0.2,
             "hetgat_heads": 1,
-            "initial_crf_loss_weight": 0.3,
-            "official_token_loss_weight": 0.5,
+        },
+        "loss_coefficients": {
+            "final_crf": 1.0,
+            "initial_crf": 1.0,
+            "official_token": 1.0,
+            "au_stance": 1.0,
+            "document_stance": 1.0,
         },
         "experiments": [],
     }

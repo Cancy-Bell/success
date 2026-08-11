@@ -97,7 +97,7 @@ def training(
     scaler,
     use_amp: bool,
 ) -> Dict[str, float]:
-    """Optimize combined BIO supervision + AU stance + Document stance."""
+    """Optimize three-class token, AU stance, and Document stance losses."""
     model.train()
     running = {name: 0.0 for name in LOSS_NAMES}
     steps = 0
@@ -351,7 +351,8 @@ def print_metrics(split: str, metrics: Dict[str, float]) -> None:
         "(delta=%+.4f) | Graph/Fused stance Token F1=%.4f/%.4f "
         "| official segment/sentence F1=%.4f/%.4f | AU token P/R/F1=%.4f/%.4f/%.4f "
         "| All stance Acc/F1=%.4f/%.4f | Arg stance Acc/F1=%.4f/%.4f | "
-        "Gold-AU stance Acc/F1=%.4f/%.4f (m=%d) | "
+        "Initial Gold-AU stance Acc/F1=%.4f/%.4f | "
+        "Graph Gold-AU stance Acc/F1=%.4f/%.4f (m=%d) | "
         "Entity F1=%.4f | Document F1=%.4f | O-bias=%.4f",
         split,
         metrics["total_loss"],
@@ -369,6 +370,8 @@ def print_metrics(split: str, metrics: Dict[str, float]) -> None:
         metrics["all_stance_token_macro_f1"],
         metrics["argument_stance_token_accuracy"],
         metrics["argument_stance_token_macro_f1"],
+        metrics["initial_gold_au_stance_accuracy"],
+        metrics["initial_gold_au_stance_macro_f1"],
         metrics["gold_au_stance_accuracy"],
         metrics["gold_au_stance_macro_f1"],
         int(metrics["gold_au_stance_count"]),
@@ -377,7 +380,7 @@ def print_metrics(split: str, metrics: Dict[str, float]) -> None:
         metrics["final_o_bias"],
     )
     LOGGER.info(
-        "%s BIO view: Initial/Final 5-class Token F1=%.4f/%.4f "
+        "%s token view: Initial/Final 3-class Token F1=%.4f/%.4f "
         "(delta=%+.4f) | strict AU span F1=%.4f",
         split,
         metrics["initial_bio_token_macro_f1"],
@@ -444,7 +447,7 @@ def checkpoint_selection_metadata(checkpoint: Dict[str, object]) -> Tuple[str, f
         score = float(checkpoint["dev_official_token_f1"])
     else:
         # Checkpoints produced before Official-Token selection used this key for
-        # Dev final five-class BIO macro-F1.
+        # Legacy checkpoints used the former Dev five-class BIO macro-F1 key.
         score = float(checkpoint.get("dev_token_f1", 0.0))
     return metric, score
 
@@ -452,7 +455,7 @@ def checkpoint_selection_metadata(checkpoint: Dict[str, object]) -> Tuple[str, f
 def build_model(config: BertConfig, args: argparse.Namespace) -> TokenBERT:
     return TokenBERT(
         model_name=args.pretrained_weights,
-        num_labels=5,
+        num_labels=3,
         output_hidden_states=False,
         use_crf=args.crf,
         config=config,
@@ -466,8 +469,6 @@ def build_model(config: BertConfig, args: argparse.Namespace) -> TokenBERT:
         au_top_k=args.au_top_k,
         au_syntax_hops=args.au_syntax_hops,
         num_document_labels=len(DOCUMENT_LABELS),
-        initial_crf_loss_weight=args.initial_crf_loss_weight,
-        official_token_loss_weight=args.official_token_loss_weight,
         initial_o_bias=args.initial_o_bias,
         local_files_only=args.local_files_only,
     )
@@ -538,7 +539,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--seed", type=int, default=42, help="Random seed.")
     parser.add_argument("--card_number", type=int, default=0, help="GPU card number.")
     parser.add_argument("--epochs", type=int, default=30, help="Maximum epochs.")
-    parser.add_argument("--num_labels", type=int, default=5, choices=[5])
+    parser.add_argument("--num_labels", type=int, default=3, choices=[3])
     parser.add_argument("--gradient_accumulation_steps", type=int, default=1)
     parser.add_argument("--learning_rate", type=float, default=1e-5)
     parser.add_argument("--max_grad_norm", type=float, default=1.0)
@@ -601,22 +602,10 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--early_stop_patience", type=int, default=5)
     parser.add_argument("--early_stop_min_delta", type=float, default=0.0)
     parser.add_argument(
-        "--initial_crf_loss_weight",
-        type=float,
-        default=0.3,
-        help="Weight of Initial-BIO CRF NLL inside the combined BIO objective.",
-    )
-    parser.add_argument(
-        "--official_token_loss_weight",
-        type=float,
-        default=0.5,
-        help="Weight of collapsed non/con/pro token CE inside the BIO objective.",
-    )
-    parser.add_argument(
         "--initial_o_bias",
         type=float,
         default=0.0,
-        help="Initial learnable bias added to the Final-CRF O emission.",
+        help="Initial learnable bias added to the Final-CRF non emission.",
     )
     parser.add_argument("--weight_decay", type=float, default=0.01)
     parser.add_argument("--warmup_ratio", type=float, default=0.0)
@@ -653,10 +642,6 @@ def main() -> None:
         raise ValueError("gradient_accumulation_steps must be >= 1")
     if args.early_stop_patience < 1:
         raise ValueError("early_stop_patience must be >= 1")
-    if args.initial_crf_loss_weight < 0.0:
-        raise ValueError("initial_crf_loss_weight must be >= 0")
-    if args.official_token_loss_weight < 0.0:
-        raise ValueError("official_token_loss_weight must be >= 0")
     if args.train and not args.save_model:
         raise ValueError(
             "training requires checkpoint saving so final Dev/Test can be run "
@@ -750,7 +735,7 @@ def main() -> None:
 
     config = BertConfig.from_pretrained(
         args.pretrained_weights,
-        num_labels=5,
+        num_labels=3,
         local_files_only=args.local_files_only,
     )
     if not 0.0 <= args.bert_dropout < 1.0:
@@ -774,14 +759,12 @@ def main() -> None:
     LOGGER.info("CUDA automatic mixed precision=%s", use_amp)
     LOGGER.info(
         "Full end-to-end training from epoch 1: Dual-BERT + GCN + "
-        "Semantic-Syntax Fusion + Initial BIO + batch HetGAT + stance feedback "
-        "+ Final BIO-CRF"
+        "Semantic-Syntax Fusion + Initial 3-class CRF + batch HetGAT + "
+        "stance feedback + Final 3-class CRF"
     )
     LOGGER.info(
-        "Loss = BIOCombined + AU stance + Document stance; "
-        "BIOCombined = FinalCRF + %.3f*InitialCRF + %.3f*OfficialTokenCE",
-        args.initial_crf_loss_weight,
-        args.official_token_loss_weight,
+        "Loss = FinalCRF + InitialCRF + OfficialTokenNLL + AU stance + "
+        "Document stance (all coefficients = 1.0)"
     )
     LOGGER.info(
         "Final O-emission bias: learnable scalar initialized to %.3f",

@@ -227,7 +227,7 @@ def align_wordpieces_to_original_tokens(
         preview = unaligned_wordpieces[:8]
         warning = (
             "sample={} has {} WordPieces outside the official annotation "
-            "token stream (indices {}{}); assigning BIO=O"
+            "token stream (indices {}{}); assigning token label=non"
         ).format(
             sample_id,
             len(unaligned_wordpieces),
